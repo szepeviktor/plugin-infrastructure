@@ -42,12 +42,13 @@ async function run() {
 		'### Earlier versions ###',
 		`For the changelog of earlier versions, <a href="https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/releases">please refer to the releases page on GitHub</a>.`,
 	);
+	changelog.unshift('## Changelog ##');
 
 	try {
 		const results = await replace( {
 			files: filename,
 			from: '<!-- changelog -->',
-			to: '## Changelog ##\n\n' + changelog.join( '\n\n' ),
+			to: changelog.join( '\n\n' ),
 		} );
 
 		if ( results.filter( result => ! result.hasChanged ).length ) {
