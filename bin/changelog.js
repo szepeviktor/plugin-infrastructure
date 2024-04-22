@@ -47,7 +47,7 @@ async function run() {
 		const results = await replace( {
 			files: filename,
 			from: '<!-- changelog -->',
-			to: changelog.join( '\n\n' ),
+			to: '## Changelog ##\n\n' + changelog.join( '\n\n' ),
 		} );
 
 		if ( results.filter( result => ! result.hasChanged ).length ) {
