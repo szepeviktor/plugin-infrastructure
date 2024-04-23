@@ -85,3 +85,12 @@ jobs:
         git push --tags
       env:
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create zip file
+      run: git archive --format=zip --output=build-$VERSION.zip HEAD
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: build-$VERSION.zip
