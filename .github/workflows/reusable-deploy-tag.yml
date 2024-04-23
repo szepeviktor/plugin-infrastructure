@@ -22,6 +22,10 @@ on:
         type: boolean
         default: true
         description: Whether to deploy the release to WordPress.org
+      version:
+        required: true
+        type: string
+        description: The version number of the release
     secrets:
       WPORG_SVN_USERNAME:
         required: true
@@ -93,7 +97,7 @@ jobs:
       id: semvers
       uses: WyriHaximus/github-action-next-semvers@v1.0
       with:
-        version: ${{ github.event.release.tag_name }}
+        version: ${{ inputs.version }}
 
     - name: Create next patch milestone
       uses: octokit/request-action@v2.x
