@@ -14,6 +14,11 @@ on:
         type: boolean
         default: true
         description: Whether to generate the Composer autoloader files and add them to the commit
+      tag:
+        required: false
+        type: boolean
+        default: true
+        description: Whether to tag the release
 
 jobs:
   build:
@@ -64,13 +69,18 @@ jobs:
     - name: Setup version
       run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
-    - name: Tag
+    - name: Commit
       run: |
-        echo "Releasing version $VERSION ..."
+        echo 'Committing ...'
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout -b "release-$VERSION"
         git commit -m "Release $VERSION"
+
+    - name: Tag
+      if: ${{ inputs.tag }}
+      run: |
+        echo "Releasing version $VERSION ..."
         git tag "$VERSION"
         git push --tags
       env:
