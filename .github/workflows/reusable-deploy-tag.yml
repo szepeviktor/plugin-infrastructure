@@ -81,25 +81,19 @@ jobs:
         version: ${{ github.event.release.tag_name }}
 
     - name: Create next patch milestone
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/milestones
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.patch }}"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       continue-on-error: true
 
     - name: Create next minor milestone
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/milestones
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.minor }}"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       continue-on-error: true
 
     - name: Create next major milestone
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/milestones
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.major }}"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
       continue-on-error: true
