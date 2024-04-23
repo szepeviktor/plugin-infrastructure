@@ -67,12 +67,20 @@ jobs:
 
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@2.2.2
+      id: deploy
       env:
         SVN_USERNAME: ${{ secrets.WPORG_SVN_USERNAME }}
         SVN_PASSWORD: ${{ secrets.WPORG_SVN_PASSWORD }}
         ASSETS_DIR: ${{ inputs.assets_dir }}
       with:
         dry-run: ${{ ! inputs.deploy }}
+        generate-zip: true
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: deploy
+        path: ${{ steps.deploy.outputs.zip-path }}
 
   github:
     name: GitHub Milestones
