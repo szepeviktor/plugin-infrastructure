@@ -89,11 +89,11 @@ jobs:
     - name: Create zip file
       if: always()
       id: create-zip
-      run: git archive --format=zip --output=build-$VERSION.zip HEAD
+      run: git archive --format=zip --output=build.zip HEAD
 
     - name: Upload zip
       uses: actions/upload-artifact@v4
       with:
         name: build
-        path: build-$VERSION.zip
+        path: build.zip
       if: always() && steps.create-zip.outcome == 'success'
