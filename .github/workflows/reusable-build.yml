@@ -87,6 +87,8 @@ jobs:
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create zip file
+      if: always()
+      id: create-zip
       run: git archive --format=zip --output=build-$VERSION.zip HEAD
 
     - name: Upload zip
@@ -94,3 +96,4 @@ jobs:
       with:
         name: build
         path: build-$VERSION.zip
+      if: always() && steps.create-zip.outcome == 'success'
