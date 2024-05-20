@@ -81,6 +81,7 @@ jobs:
 
   github:
     name: GitHub Milestones
+    if: ${{ inputs.deploy }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
