@@ -13,9 +13,8 @@ on:
         type: string
         description: The plugin readme file name, either readme.md or readme.txt
       deploy:
-        required: false
+        required: true
         type: boolean
-        default: true
         description: Whether to deploy the release to WordPress.org
       version:
         required: true
