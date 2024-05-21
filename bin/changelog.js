@@ -1,5 +1,5 @@
 const github = require('@actions/github');
-const replace = require('replace-in-file');
+const fs = require('fs');
 
 const filename = process.argv[2] || 'readme.md';
 const myToken = process.env.TOKEN;
@@ -43,18 +43,10 @@ async function run() {
 	);
 	changelog.unshift('## Changelog ##');
 
+	// Append the changelog
 	try {
-		const results = await replace( {
-			files: filename,
-			from: '<!-- changelog -->',
-			to: changelog.join( '\n\n' ),
-		} );
-
-		if ( results.filter( result => ! result.hasChanged ).length ) {
-			console.error( 'No replacements made' );
-			process.exitCode = 1;
-		}
-	} catch( exception ) {
+		fs.appendFileSync( filename, '\n' + changelog.join( '\n\n' ) );
+	} catch ( exception ) {
 		console.error( exception );
 		process.exitCode = 1;
 	}

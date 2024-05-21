@@ -10,7 +10,6 @@
 		"node": ">=16"
 	},
 	"dependencies": {
-		"@actions/github": "^2",
-		"replace-in-file": "^5"
+		"@actions/github": "^2"
 	}
 }
