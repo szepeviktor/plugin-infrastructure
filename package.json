@@ -11,7 +11,6 @@
 	},
 	"dependencies": {
 		"@actions/github": "^2",
-		"replace-in-file": "^5",
-		"semver": "^7"
+		"replace-in-file": "^5"
 	}
 }

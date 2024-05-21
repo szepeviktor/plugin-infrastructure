@@ -1,5 +1,4 @@
 const github = require('@actions/github');
-const semver = require('semver');
 const replace = require('replace-in-file');
 
 const filename = process.argv[2] || 'readme.md';
@@ -15,7 +14,7 @@ async function run() {
 	);
 
 	let sorted = published.sort( ( a, b ) =>
-		semver.rcompare( semver.coerce( a.tag_name ), semver.coerce( b.tag_name ) )
+		new Date( b.published_at ) - new Date( a.published_at )
 	);
 
 	let changelog = sorted.map( ( release ) => {
