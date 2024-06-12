@@ -68,12 +68,14 @@ jobs:
         fi
 
     - name: Setup node
+      if: ${{ inputs.node }}
       uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
         cache: npm
 
     - name: Install node dependencies
+      if: ${{ inputs.node }}
       run: npm ci
 
     - name: Run the build
