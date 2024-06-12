@@ -16,11 +16,11 @@ echo "Starting up..."
 # Wait for the database server:
 while ! docker compose exec -T database /bin/bash -c 'mysqladmin ping --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" --silent' | grep 'mysqld is alive' >/dev/null; do
 	echo 'Waiting for database server ping...'
-	sleep 1
+	sleep 3
 done
 while ! docker compose exec -T database /bin/bash -c 'mysql --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" --execute="SHOW DATABASES;"' | grep 'information_schema' >/dev/null; do
 	echo 'Waiting for database server query...'
-	sleep 1
+	sleep 3
 done
 
 # Run the integration tests:
