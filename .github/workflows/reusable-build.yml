@@ -44,12 +44,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup node
+      if: ${{ inputs.node }}
       uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
         cache: npm
 
     - name: Install Dependencies
+      if: ${{ inputs.node }}
       run: npm ci
 
     - name: Generate autoload file
