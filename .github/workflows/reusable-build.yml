@@ -5,19 +5,16 @@ on:
   workflow_call:
     inputs:
       node:
-        required: false
+        required: true
         type: boolean
-        default: true
         description: Whether to run the Node build step and add the assets to the commit
       vendor:
-        required: false
+        required: true
         type: boolean
-        default: true
         description: Whether to generate the Composer autoloader files and add them to the commit
       tag:
-        required: false
+        required: true
         type: boolean
-        default: true
         description: Whether to tag the release
 
 jobs:
