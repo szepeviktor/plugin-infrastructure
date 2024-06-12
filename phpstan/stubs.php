@@ -8,9 +8,7 @@ define( 'DB_PASSWORD', '' );
 define( 'DB_USER', '' );
 
 define( 'SAVEQUERIES', false );
-define( 'WP_CONTENT_DIR', '' );
 define( 'WP_MEMORY_LIMIT', '' );
-define( 'WP_PLUGIN_DIR', '' );
 define( 'WPINC', '' );
 
 define( 'AUTH_COOKIE', '' );
