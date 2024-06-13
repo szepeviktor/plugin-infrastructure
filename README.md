@@ -6,10 +6,10 @@ Provided without support, warranty, guarantee, backwards compatibility, fitness 
 
 ## Used by
 
-* [x] [Extended CPTs](https://github.com/johnbillion/extended-cpts)
-* [x] [Query Monitor](https://github.com/johnbillion/query-monitor)
-* [x] [User Switching](https://github.com/johnbillion/user-switching)
-* [ ] WP Crontrol
+* [Extended CPTs](https://github.com/johnbillion/extended-cpts)
+* [Query Monitor](https://github.com/johnbillion/query-monitor)
+* [User Switching](https://github.com/johnbillion/user-switching)
+* [WP Crontrol](https://github.com/johnbillion/wp-crontrol)
 
 ## Licence
 
