@@ -13,9 +13,11 @@ on:
         type: string
         description: The plugin readme file name, either readme.md or readme.txt
       node:
+        required: true
         type: boolean
         description: Whether to run the Node build step and add the assets to the commit
       vendor:
+        required: true
         type: boolean
         description: Whether to generate the Composer autoloader files and add them to the commit
     secrets:

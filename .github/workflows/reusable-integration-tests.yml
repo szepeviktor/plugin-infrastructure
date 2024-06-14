@@ -13,6 +13,7 @@ on:
         type: string
         description: PHP version to use in major.minor format (e.g. 8.0)
       node:
+        required: true
         type: boolean
         description: Whether to run the Node build step
 
