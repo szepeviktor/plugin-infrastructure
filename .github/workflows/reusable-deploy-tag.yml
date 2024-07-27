@@ -76,8 +76,8 @@ jobs:
             ].join('\n');
           } );
 
-          // Show a maximum of 15 releases
-          changelog = changelog.slice( 0, 15 );
+          // Show a maximum of 10 releases
+          changelog = changelog.slice( 0, 10 );
 
           changelog.push(
             '### Earlier versions ###',
