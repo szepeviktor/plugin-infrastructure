@@ -134,19 +134,16 @@ jobs:
         version: ${{ inputs.version }}
 
     - name: Create next patch milestone
-      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.patch }}"
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.patch }}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      continue-on-error: true
 
     - name: Create next minor milestone
-      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.minor }}"
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.minor }}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      continue-on-error: true
 
     - name: Create next major milestone
-      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.major }}"
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.major }}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
-      continue-on-error: true
