@@ -30,6 +30,11 @@ jobs:
         run: |
           sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ env.BRANCH_REF }}/g' .github/workflows/integration-tests.yml
 
+      - name: Check the changed files
+        run: |
+          git diff
+          git status
+
       - name: Open PR
         uses: peter-evans/create-pull-request@v6
         with:
