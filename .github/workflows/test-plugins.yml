@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         plugin:
-          - 'user-switching'
+          - user-switching
       fail-fast: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -42,7 +42,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
-          commit-message: "Update Plugin Infrastructure to ${{ github.event.after }}"
+          commit-message: Update Plugin Infrastructure to ${{ github.event.after }}
           title: Update Plugin Infrastructure to ${{ env.BRANCH_REF }}
           body: |
             This PR updates [Plugin Infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.BRANCH_REF }}`.
