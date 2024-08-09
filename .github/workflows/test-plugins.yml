@@ -49,6 +49,7 @@ jobs:
 
       - name: Open PR
         uses: peter-evans/create-pull-request@v6
+        id: cpr
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
           commit-message: Update Plugin Infrastructure to ${{ github.event.after }}
@@ -61,3 +62,7 @@ jobs:
             This is an automated PR created by [the Test Plugins workflow](https://github.com/johnbillion/plugin-infrastructure/actions/workflows/test-plugins.yml).
           branch: update-plugin-infrastructure
           draft: true
+
+      - name: Set labels
+        run: |
+          gh pr edit ${{ github.event.number }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
