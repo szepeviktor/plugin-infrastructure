@@ -32,9 +32,9 @@ jobs:
 
       - name: Update tests references
         run: |
-          sed -i 's/reusable-acceptance-tests.yml@trunk/reusable-acceptance-tests.yml@${{ github.event.after }}/g' .github/workflows/acceptance-tests.yml
-          sed -i 's/reusable-coding-standards.yml@trunk/reusable-coding-standards.yml@${{ github.event.after }}/g' .github/workflows/coding-standards.yml
-          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.event.after }}/g' .github/workflows/integration-tests.yml
+          test -f .github/workflows/acceptance-tests.yml && sed -i 's/reusable-acceptance-tests.yml@trunk/reusable-acceptance-tests.yml@${{ github.event.after }}/g' .github/workflows/acceptance-tests.yml
+          test -f .github/workflows/coding-standards.yml && sed -i 's/reusable-coding-standards.yml@trunk/reusable-coding-standards.yml@${{ github.event.after }}/g' .github/workflows/coding-standards.yml
+          test -f .github/workflows/integration-tests.yml && sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.event.after }}/g' .github/workflows/integration-tests.yml
 
       - name: Check the changed files
         run: |
