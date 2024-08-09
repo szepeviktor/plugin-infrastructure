@@ -65,6 +65,7 @@ jobs:
 
       - name: Set labels
         run: |
-          gh pr edit --repo johnbillion/plugin-infrastructure ${{ github.event.number }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
+          gh --repo johnbillion/plugin-infrastructure label create "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}" --force
+          gh --repo johnbillion/plugin-infrastructure pr edit ${{ github.event.number }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
