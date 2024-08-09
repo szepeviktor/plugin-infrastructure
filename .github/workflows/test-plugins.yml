@@ -26,6 +26,11 @@ jobs:
           repository: johnbillion/${{ matrix.plugin }}
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - name: Update tests reference
         run: |
           sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.event.pull_request.base.sha }}/g' .github/workflows/integration-tests.yml
