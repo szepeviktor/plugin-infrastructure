@@ -29,7 +29,7 @@ jobs:
           sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.head_ref }}/g' .github/workflows/integration-tests.yml
 
       - name: Open PR
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
           commit-message: "Update plugin-infrastructure to ${{ github.sha }}"
