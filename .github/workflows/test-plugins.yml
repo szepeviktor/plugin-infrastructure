@@ -28,7 +28,7 @@ jobs:
 
       - name: Update tests reference
         run: |
-          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.sha }}/g' .github/workflows/integration-tests.yml
+          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.event.pull_request.base.sha }}/g' .github/workflows/integration-tests.yml
 
       - name: Check the changed files
         run: |
@@ -39,7 +39,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
-          commit-message: "Update plugin-infrastructure to ${{ github.sha }}"
+          commit-message: "Update plugin-infrastructure to ${{ github.event.pull_request.base.sha }}"
           title: Update plugin-infrastructure to ${{ env.BRANCH_REF }}
           body: |
             This PR updates [plugin-infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.BRANCH_REF }}`.
