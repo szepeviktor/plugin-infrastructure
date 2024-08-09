@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: Test Plugins
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.plugin }}
+    strategy:
+      matrix:
+        plugin:
+          - 'user-switching'
+      fail-fast: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: johnbillion/${{ matrix.plugin }}
+          token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
+
+      - name: Update tests reference
+        run: |
+          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.ref_name }}/g' .github/workflows/integration-tests.yml
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
+          commit-message: "Update plugin-infrastructure to ${{ github.sha }}"
+          title: Update plugin-infrastructure to ${{ github.ref_name }}"
+          body: |
+            This PR updates plugin-infrastructure to ${{ github.ref_name }}.
+          branch: update-plugin-infrastructure
+          draft: true
