@@ -33,8 +33,8 @@ jobs:
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
           commit-message: "Update plugin-infrastructure to ${{ github.sha }}"
-          title: Update plugin-infrastructure to ${{ github.head_ref }}"
+          title: Update plugin-infrastructure to ${{ github.head_ref }}
           body: |
-            This PR updates plugin-infrastructure to ${{ github.head_ref }}.
+            This PR updates [plugin-infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ github.head_ref }}`.
           branch: update-plugin-infrastructure
           draft: true
