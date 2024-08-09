@@ -10,6 +10,8 @@ permissions:
 jobs:
   test:
     name: ${{ matrix.plugin }}
+    env:
+      BRANCH_REF: ${{ github.head_ref }}
     strategy:
       matrix:
         plugin:
@@ -26,15 +28,15 @@ jobs:
 
       - name: Update tests reference
         run: |
-          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.head_ref }}/g' .github/workflows/integration-tests.yml
+          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ env.BRANCH_REF }}/g' .github/workflows/integration-tests.yml
 
       - name: Open PR
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
           commit-message: "Update plugin-infrastructure to ${{ github.sha }}"
-          title: Update plugin-infrastructure to ${{ github.head_ref }}
+          title: Update plugin-infrastructure to ${{ env.BRANCH_REF }}
           body: |
-            This PR updates [plugin-infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ github.head_ref }}`.
+            This PR updates [plugin-infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.BRANCH_REF }}`.
           branch: update-plugin-infrastructure
           draft: true
