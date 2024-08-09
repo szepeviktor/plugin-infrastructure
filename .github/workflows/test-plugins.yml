@@ -47,6 +47,8 @@ jobs:
           body: |
             This PR updates [Plugin Infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.BRANCH_REF }}`.
 
+            See ${{ github.event.pull_request._links.html.href }}.
+
             This is an automated PR created by [the Test Plugins workflow](https://github.com/johnbillion/plugin-infrastructure/actions/workflows/test-plugins.yml).
           branch: update-plugin-infrastructure
           draft: true
