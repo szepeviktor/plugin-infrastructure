@@ -10,6 +10,7 @@ permissions:
 jobs:
   test:
     name: ${{ matrix.plugin }}
+    if: github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure'
     env:
       BRANCH_REF: ${{ github.head_ref }}
     strategy:
