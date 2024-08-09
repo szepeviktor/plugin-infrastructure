@@ -28,7 +28,7 @@ jobs:
 
       - name: Update tests reference
         run: |
-          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ env.BRANCH_REF }}/g' .github/workflows/integration-tests.yml
+          sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ github.sha }}/g' .github/workflows/integration-tests.yml
 
       - name: Check the changed files
         run: |
