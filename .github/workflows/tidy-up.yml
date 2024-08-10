@@ -56,7 +56,7 @@ jobs:
           github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
   close:
-    name: Close PRs
+    name: Close PRs / ${{ matrix.plugin }}
     runs-on: ubuntu-latest
     needs: find
     timeout-minutes: 5
