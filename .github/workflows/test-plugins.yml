@@ -53,6 +53,7 @@ jobs:
               head_branch: pr.data.head.ref,
               head_sha: pr.data.head.sha,
               pr_number: pr.data.number,
+              pr_link: pr.data.html_url,
             };
           github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
         env:
@@ -88,7 +89,7 @@ jobs:
           body: | #markdown
             This PR updates [Plugin Infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.HEAD_REPO }}@${{ env.BRANCH_REF }}`.
 
-            See ${{ github.event.pull_request._links.html.href }} for more details.
+            See ${{ env.PR_LINK }} for more details.
 
             This is an automated PR created by [the Test Plugins workflow](https://github.com/johnbillion/plugin-infrastructure/actions/workflows/test-plugins.yml).
           branch: update-plugin-infrastructure/${{ env.HEAD_REPO }}/${{ env.BRANCH_REF }}
@@ -97,6 +98,7 @@ jobs:
           HEAD_REPO: ${{ fromJson( steps.pr-data.outputs.result ).head_repo }}
           SHA_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_sha }}
           BRANCH_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_branch }}
+          PR_LINK: ${{ fromJson( steps.pr-data.outputs.result ).pr_link }}
 
       - name: Set labels
         run: | #shell
