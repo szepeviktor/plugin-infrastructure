@@ -103,7 +103,7 @@ jobs:
               await github.rest.git.deleteRef({
                 owner: 'johnbillion',
                 repo: '${{ matrix.plugin }}',
-                ref: `heads/update-plugin-infrastructure-to-${pr.data.head.ref}`,
+                ref: `heads/${pr.data.head.ref}`,
               });
             } else {
               console.log(`No PR found for ${{ matrix.plugin }}`);
