@@ -87,7 +87,7 @@ jobs:
               // Fetch the PR
               const pr = await github.rest.pulls.get({
                 owner: 'johnbillion',
-                repo: 'plugin-infrastructure',
+                repo: '${{ matrix.plugin }}',
                 pull_number: pr_number,
               });
 
