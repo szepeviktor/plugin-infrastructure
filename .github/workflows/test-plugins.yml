@@ -14,6 +14,7 @@ jobs:
     env:
       BRANCH_REF: ${{ github.head_ref }}
       SHA_REF: ${{ github.event.pull_request.head.sha }}
+      HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
     strategy:
       matrix:
         plugin:
@@ -39,13 +40,13 @@ jobs:
       - name: Update tests references
         run: | #shell
           if [ -f .github/workflows/acceptance-tests.yml ]; then
-            sed -i 's/reusable-acceptance-tests.yml@trunk/reusable-acceptance-tests.yml@${{ env.SHA_REF }}/g' .github/workflows/acceptance-tests.yml
+            sed -i 's/johnbillion/plugin-infrastructure/.github/workflows/reusable-acceptance-tests.yml@trunk/${{ env.HEAD_REPO }}/.github/workflows/reusable-acceptance-tests.yml@${{ env.SHA_REF }}/g' .github/workflows/acceptance-tests.yml
           fi
           if [ -f .github/workflows/coding-standards.yml ]; then
-            sed -i 's/reusable-coding-standards.yml@trunk/reusable-coding-standards.yml@${{ env.SHA_REF }}/g' .github/workflows/coding-standards.yml
+            sed -i 's/johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk/${{ env.HEAD_REPO }}/.github/workflows/reusable-coding-standards.yml@${{ env.SHA_REF }}/g' .github/workflows/coding-standards.yml
           fi
           if [ -f .github/workflows/integration-tests.yml ]; then
-            sed -i 's/reusable-integration-tests.yml@trunk/reusable-integration-tests.yml@${{ env.SHA_REF }}/g' .github/workflows/integration-tests.yml
+            sed -i 's/johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk/${{ env.HEAD_REPO }}/.github/workflows/reusable-integration-tests.yml@${{ env.SHA_REF }}/g' .github/workflows/integration-tests.yml
           fi
 
       - name: Check the changed files
@@ -59,14 +60,14 @@ jobs:
         with:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
           commit-message: Update Plugin Infrastructure to ${{ env.SHA_REF }}
-          title: Update Plugin Infrastructure to ${{ env.BRANCH_REF }}
+          title: Update Plugin Infrastructure to ${{ env.HEAD_REPO }}@${{ env.BRANCH_REF }}
           body: | #markdown
-            This PR updates [Plugin Infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.BRANCH_REF }}`.
+            This PR updates [Plugin Infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.HEAD_REPO }}@${{ env.BRANCH_REF }}`.
 
             See ${{ github.event.pull_request._links.html.href }}.
 
             This is an automated PR created by [the Test Plugins workflow](https://github.com/johnbillion/plugin-infrastructure/actions/workflows/test-plugins.yml).
-          branch: update-plugin-infrastructure-to-${{ env.BRANCH_REF }}
+          branch: update-plugin-infrastructure/${{ env.HEAD_REPO }}/${{ env.BRANCH_REF }}
           draft: true
 
       - name: Set labels
