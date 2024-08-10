@@ -86,11 +86,11 @@ jobs:
 
               await github.rest.pulls.update({
                 owner: 'johnbillion',
-                repo: ${{ matrix.plugin }},
+                repo: '${{ matrix.plugin }}',
                 pull_number: pr_number,
                 state: 'closed',
               });
             } else {
-              console.log(`No PR found for ${matrix.plugin}`);
+              console.log(`No PR found for ${{ matrix.plugin }}`);
             }
           github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
