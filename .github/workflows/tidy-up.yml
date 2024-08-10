@@ -67,6 +67,7 @@ jobs:
           - query-monitor
           - user-switching
           - wp-crontrol
+      fail-fast: false
     steps:
       - name: Dump GitHub context
         env:
