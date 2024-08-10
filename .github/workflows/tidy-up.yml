@@ -84,11 +84,26 @@ jobs:
             if ( prs.hasOwnProperty('${{ matrix.plugin }}') ) {
               const pr_number = prs['${{ matrix.plugin }}'];
 
+              // Fetch the PR
+              const pr = await github.rest.pulls.get({
+                owner: 'johnbillion',
+                repo: 'plugin-infrastructure',
+                pull_number: pr_number,
+              });
+
+              // Close the PR
               await github.rest.pulls.update({
                 owner: 'johnbillion',
                 repo: '${{ matrix.plugin }}',
                 pull_number: pr_number,
                 state: 'closed',
+              });
+
+              // Delete its branch
+              await github.rest.git.deleteRef({
+                owner: 'johnbillion',
+                repo: '${{ matrix.plugin }}',
+                ref: `heads/update-plugin-infrastructure-to-${pr.data.head.ref}`,
               });
             } else {
               console.log(`No PR found for ${{ matrix.plugin }}`);
