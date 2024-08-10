@@ -46,10 +46,13 @@ jobs:
         go-version: '1.21'
 
     - name: Install and build Octoscan
-      run: | #sh
+      run: | #shell
         cd octoscan
         go mod tidy
         go build
 
     - name: Run Octoscan
-      run: ./octoscan/octoscan scan .
+      run: | #shell
+        # Octoscan does not use exit codes to indicate success or failure, so we need to check the output
+        ./octoscan/octoscan scan . | tee octoscan-result.txt
+        test ! -s octoscan-result.txt
