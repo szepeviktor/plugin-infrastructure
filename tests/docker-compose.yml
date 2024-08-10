@@ -7,7 +7,8 @@ services:
     ports:
       - 80
     depends_on:
-      - php
+      php:
+        condition: service_started
     volumes:
       - ./vendor/wordpress/wordpress:/var/www/html/:rw
       - ./vendor/johnbillion/plugin-infrastructure/config/wp-config.php:/var/www/html/wp-config.php
@@ -27,7 +28,8 @@ services:
       WORDPRESS_DB_NAME: plugindb
       WORDPRESS_DEBUG: ${LOCAL_WP_DEBUG-1}
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     init: true
     volumes:
       - ./vendor/wordpress/wordpress:/var/www/html/:rw
@@ -65,8 +67,10 @@ services:
       WORDPRESS_DB_PASSWORD: pluginpass
       WORDPRESS_DB_NAME: plugindb
     depends_on:
-      - database
-      - php
+      php:
+        condition: service_started
+      database:
+        condition: service_healthy
     init: true
     volumes:
       - ./vendor/wordpress/wordpress:/var/www/:rw
