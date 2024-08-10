@@ -66,7 +66,7 @@ jobs:
             See ${{ github.event.pull_request._links.html.href }}.
 
             This is an automated PR created by [the Test Plugins workflow](https://github.com/johnbillion/plugin-infrastructure/actions/workflows/test-plugins.yml).
-          branch: update-plugin-infrastructure
+          branch: update-plugin-infrastructure-to-${{ env.BRANCH_REF }}
           draft: true
 
       - name: Set labels
