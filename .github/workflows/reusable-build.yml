@@ -53,7 +53,7 @@ jobs:
 
     - name: Generate autoload file
       if: ${{ inputs.vendor }}
-      run: |
+      run: | #shell
         composer install
         composer run build-vendor
         git add -f vendor/autoload.php
@@ -61,7 +61,7 @@ jobs:
 
     - name: Build Assets
       if: ${{ inputs.node }}
-      run: |
+      run: | #shell
         npm run build
         git add -f assets/*
 
@@ -69,7 +69,7 @@ jobs:
       run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
     - name: Commit
-      run: |
+      run: | #shell
         echo 'Committing ...'
         git config user.name github-actions
         git config user.email github-actions@github.com
@@ -79,7 +79,7 @@ jobs:
 
     - name: Tag
       if: ${{ inputs.tag }}
-      run: |
+      run: | #shell
         echo "Releasing version $VERSION ..."
         git tag "$VERSION"
         git push --tags

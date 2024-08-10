@@ -63,26 +63,26 @@ jobs:
 
       - name: Generate autoload file
         if: ${{ inputs.vendor }}
-        run: |
+        run: | #shell
           composer run build-vendor
           git add -f vendor/autoload.php
           git add -f vendor/composer/*
 
       - name: Build Assets
         if: ${{ inputs.node }}
-        run: |
+        run: | #shell
           npm run build
           git add -f assets/*
 
       - name: Populate Changelog
-        run: |
+        run: | #shell
           node vendor/johnbillion/plugin-infrastructure/bin/changelog.js ${{ inputs.readme }}
           git add ${{ inputs.readme }}
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit
-        run: |
+        run: | #shell
           git config user.name github-actions
           git config user.email github-actions@github.com
           git commit -m "Assets"

@@ -46,7 +46,7 @@ jobs:
       env:
         FILENAME: ${{ inputs.readme }}
       with:
-        script: |
+        script: | #js
           const fs = require('fs');
           const { FILENAME } = process.env
           const { data: releases } = await github.rest.repos.listReleases( context.repo );
@@ -94,7 +94,7 @@ jobs:
           }
 
     - name: Commit Changelog
-      run: |
+      run: | #shell
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add ${{ inputs.readme }}

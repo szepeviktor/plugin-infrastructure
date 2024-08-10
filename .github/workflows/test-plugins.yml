@@ -31,7 +31,7 @@ jobs:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
       - name: Update tests references
-        run: |
+        run: | #shell
           if [ -f .github/workflows/acceptance-tests.yml ]; then
             sed -i 's/reusable-acceptance-tests.yml@trunk/reusable-acceptance-tests.yml@${{ github.event.after }}/g' .github/workflows/acceptance-tests.yml
           fi
@@ -43,7 +43,7 @@ jobs:
           fi
 
       - name: Check the changed files
-        run: |
+        run: | #shell
           git diff
           git status
 
@@ -54,7 +54,7 @@ jobs:
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
           commit-message: Update Plugin Infrastructure to ${{ github.event.after }}
           title: Update Plugin Infrastructure to ${{ env.BRANCH_REF }}
-          body: |
+          body: | #markdown
             This PR updates [Plugin Infrastructure](https://github.com/johnbillion/plugin-infrastructure) to `${{ env.BRANCH_REF }}`.
 
             See ${{ github.event.pull_request._links.html.href }}.
@@ -64,7 +64,7 @@ jobs:
           draft: true
 
       - name: Set labels
-        run: |
+        run: | #shell
           gh --repo johnbillion/plugin-infrastructure label create "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}" --force --color FEF2C0
           gh --repo johnbillion/plugin-infrastructure pr edit ${{ github.event.number }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
         env:
