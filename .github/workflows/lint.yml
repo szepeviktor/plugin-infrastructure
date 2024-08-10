@@ -45,11 +45,11 @@ jobs:
       with:
         go-version: '1.21'
 
-    - name: Install dependencies
-      run: go mod tidy
-
-    - name: Build Octoscan
-      run: go build
+    - name: Install and build Octoscan
+      run: | #sh
+        cd octoscan
+        go mod tidy
+        go build
 
     - name: Run Octoscan
       run: ./octoscan/octoscan scan .
