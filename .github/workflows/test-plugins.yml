@@ -38,7 +38,7 @@ jobs:
           repository: johnbillion/${{ matrix.plugin }}
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
-      - name: Determine the head repo, branch, and SHA
+      - name: Fetch the PR data
         uses: actions/github-script@v7
         id: pr-data
         with:
@@ -51,7 +51,8 @@ jobs:
             return {
               head_repo: pr.data.head.repo.full_name,
               head_branch: pr.data.head.ref,
-              head_sha: pr.data.head.sha
+              head_sha: pr.data.head.sha,
+              pr_number: pr.data.number,
             };
           github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
         env:
@@ -100,6 +101,7 @@ jobs:
       - name: Set labels
         run: | #shell
           gh --repo johnbillion/plugin-infrastructure label create "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}" --force --color FEF2C0
-          gh --repo johnbillion/plugin-infrastructure pr edit ${{ github.event.number }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
+          gh --repo johnbillion/plugin-infrastructure pr edit ${{ env.PR_NUMBER }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ fromJson( steps.pr-data.outputs.result ).pr_number }}
