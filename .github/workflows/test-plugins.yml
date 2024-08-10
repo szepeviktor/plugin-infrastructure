@@ -3,6 +3,11 @@
 name: Test Plugins
 on:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      PR_NUMBER:
+        description: The PR number to test
+        required: true
 
 permissions:
   pull-requests: write
@@ -10,11 +15,7 @@ permissions:
 jobs:
   test:
     name: ${{ matrix.plugin }}
-    if: github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure'
-    env:
-      BRANCH_REF: ${{ github.head_ref }}
-      SHA_REF: ${{ github.event.pull_request.head.sha }}
-      HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure' || github.event_name == 'workflow_dispatch'
     strategy:
       matrix:
         plugin:
@@ -37,6 +38,25 @@ jobs:
           repository: johnbillion/${{ matrix.plugin }}
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
+      - name: Determine the head repo, branch, and SHA
+        uses: actions/github-script@v7
+        id: pr-data
+        with:
+          script: | #js
+            const pr = await github.rest.pulls.get({
+              owner: 'johnbillion',
+              repo: 'plugin-infrastructure',
+              pull_number: ${{ env.PR_NUMBER }},
+            });
+            return {
+              head_repo: pr.data.head.repo.full_name,
+              head_branch: pr.data.head.ref,
+              head_sha: pr.data.head.sha
+            };
+          github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
+        env:
+          PR_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.inputs.PR_NUMBER }}
+
       - name: Update tests references
         run: | #shell
           if [ -f .github/workflows/acceptance-tests.yml ]; then
@@ -48,6 +68,9 @@ jobs:
           if [ -f .github/workflows/integration-tests.yml ]; then
             sed -i 's/johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk/${{ env.HEAD_REPO }}/.github/workflows/reusable-integration-tests.yml@${{ env.SHA_REF }}/g' .github/workflows/integration-tests.yml
           fi
+        env:
+          HEAD_REPO: ${{ fromJson( steps.pr-data.outputs.result ).head_repo }}
+          SHA_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_sha }}
 
       - name: Check the changed files
         run: | #shell
@@ -69,6 +92,10 @@ jobs:
             This is an automated PR created by [the Test Plugins workflow](https://github.com/johnbillion/plugin-infrastructure/actions/workflows/test-plugins.yml).
           branch: update-plugin-infrastructure/${{ env.HEAD_REPO }}/${{ env.BRANCH_REF }}
           draft: true
+        env:
+          HEAD_REPO: ${{ fromJson( steps.pr-data.outputs.result ).head_repo }}
+          SHA_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_sha }}
+          BRANCH_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_branch }}
 
       - name: Set labels
         run: | #shell
