@@ -5,13 +5,17 @@ on:
   workflow_call:
     inputs:
       node:
-        required: false
+        required: true
         type: boolean
-        default: true
+        description: Whether to run the Node build step and add the assets to the commit
       vendor:
-        required: false
+        required: true
         type: boolean
-        default: true
+        description: Whether to generate the Composer autoloader files and add them to the commit
+      tag:
+        required: true
+        type: boolean
+        description: Whether to tag the release
 
 jobs:
   build:
@@ -22,7 +26,7 @@ jobs:
     timeout-minutes: 10
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install PHP
       if: ${{ inputs.vendor }}
@@ -37,17 +41,19 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup node
-      uses: actions/setup-node@v3
+      if: ${{ inputs.node }}
+      uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
         cache: npm
 
     - name: Install Dependencies
+      if: ${{ inputs.node }}
       run: npm ci
 
     - name: Generate autoload file
       if: ${{ inputs.vendor }}
-      run: |
+      run: | #shell
         composer install
         composer run build-vendor
         git add -f vendor/autoload.php
@@ -55,21 +61,39 @@ jobs:
 
     - name: Build Assets
       if: ${{ inputs.node }}
-      run: |
+      run: | #shell
         npm run build
         git add -f assets/*
 
     - name: Setup version
       run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
-    - name: Tag
-      run: |
-        echo "Releasing version $VERSION ..."
+    - name: Commit
+      run: | #shell
+        echo 'Committing ...'
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout -b "release-$VERSION"
         git commit -m "Release $VERSION"
+        git push origin -f "release-$VERSION"
+
+    - name: Tag
+      if: ${{ inputs.tag }}
+      run: | #shell
+        echo "Releasing version $VERSION ..."
         git tag "$VERSION"
         git push --tags
       env:
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create zip file
+      if: always()
+      id: create-zip
+      run: git archive --format=zip --output=build.zip HEAD
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: build.zip
+      if: always() && steps.create-zip.outcome == 'success'

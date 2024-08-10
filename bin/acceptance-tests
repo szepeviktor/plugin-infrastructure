@@ -13,7 +13,6 @@ export COMPOSE_PROJECT_NAME=${PLUGIN}
 echo "Starting up..."
 
 # Prep:
-docker compose --profile acceptance-tests up -d
 WP_PORT="$(docker inspect --type=container --format='{{(index .NetworkSettings.Ports "80/tcp" 0).HostPort}}' ${PLUGIN}-server)"
 CHROME_PORT="$(docker inspect --type=container --format='{{(index .NetworkSettings.Ports "4444/tcp" 0).HostPort}}' ${PLUGIN}-chrome)"
 DATABASE_PORT="$(docker inspect --type=container --format='{{(index .NetworkSettings.Ports "3306/tcp" 0).HostPort}}' ${PLUGIN}-database)"
@@ -26,7 +25,7 @@ wp() {
 # Wait for Selenium:
 while ! curl -sSL "http://localhost:${CHROME_PORT}/wd/hub/status" 2>&1 | grep '"ready": true' >/dev/null; do
 	echo 'Waiting for Selenium...'
-	sleep 1
+	sleep 3
 done
 
 # Reset or install the test database:

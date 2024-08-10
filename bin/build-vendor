@@ -9,12 +9,24 @@ composer remove composer/installers --update-no-dev
 composer dump-autoload --no-dev
 
 # Wrap the call to `setClassMapAuthoritative` in a `method_exists` check:
-sed -i.bak 's/\$loader->setClassMapAuthoritative(true);/if (method_exists(\$loader,"setClassMapAuthoritative")){\n            \$loader->setClassMapAuthoritative(true);\n        }/' "${PWD}/vendor/composer/autoload_real.php"
+sed -i.bak 's/^        \$loader->setClassMapAuthoritative(true);/        if (method_exists(\$loader,"setClassMapAuthoritative")){\n            \$loader->setClassMapAuthoritative(true);\n        }/' "${PWD}/vendor/composer/autoload_real.php"
 rm "${PWD}/vendor/composer/autoload_real.php.bak"
+
+# Confirm that the change was successful:
+if ! grep -q 'method_exists(\$loader,"setClassMapAuthoritative")' "${PWD}/vendor/composer/autoload_real.php" >/dev/null; then
+    echo 'setClassMapAuthoritative replacement failed'
+	exit 1
+fi
 
 # Remove autoloading for `\Composer\InstalledVersions`:
 sed -i.bak '/Composer\\\\InstalledVersions/d' "${PWD}/vendor/composer/autoload_static.php"
 rm "${PWD}/vendor/composer/autoload_static.php.bak"
+
+# Confirm that the change was successful:
+if grep -q 'Composer\\\\InstalledVersions' "${PWD}/vendor/composer/autoload_static.php" >/dev/null; then
+    echo 'Composer\InstalledVersions deletion failed'
+	exit 1
+fi
 
 # Remove files not needed for deployment:
 rm -f "${PWD}/vendor/composer/autoload_classmap.php"

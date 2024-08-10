@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow
+
+name: Tidy up
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  find:
+    name: Find PRs
+    if: github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      prs: ${{ steps.find-prs.outputs.result }}
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Find PRs
+        uses: actions/github-script@v7
+        id: find-prs
+        with:
+          script: | #js
+            const pr = await github.rest.pulls.get({
+              owner: 'johnbillion',
+              repo: 'plugin-infrastructure',
+              pull_number: context.issue.number
+            });
+            const labels = pr.data.labels.map(label => label.name);
+            const prs = {};
+
+            for (const label of labels) {
+              // label is in the format "pr:{repo}:{pr_number}", i.e. "pr:query-monitor:123"
+              const [_, repo, pr_number] = label.split(':');
+
+              if (!pr_number) {
+                continue;
+              }
+
+              await github.rest.issues.deleteLabel({
+                owner: 'johnbillion',
+                repo: 'plugin-infrastructure',
+                name: label,
+              });
+
+              prs[repo] = pr_number;
+            }
+
+            return prs;
+          github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
+
+  close:
+    name: Close PRs / ${{ matrix.plugin }}
+    runs-on: ubuntu-latest
+    needs: find
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        plugin:
+          - extended-cpts
+          - query-monitor
+          - user-switching
+          - wp-crontrol
+      fail-fast: false
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Close PR
+        uses: actions/github-script@v7
+        env:
+          PRS: ${{ needs.find.outputs.prs }}
+        with:
+          script: | #js
+            const prs = JSON.parse('${{ env.PRS }}');
+
+            if ( prs.hasOwnProperty('${{ matrix.plugin }}') ) {
+              const pr_number = prs['${{ matrix.plugin }}'];
+
+              // Fetch the PR
+              const pr = await github.rest.pulls.get({
+                owner: 'johnbillion',
+                repo: '${{ matrix.plugin }}',
+                pull_number: pr_number,
+              });
+
+              // Close the PR
+              await github.rest.pulls.update({
+                owner: 'johnbillion',
+                repo: '${{ matrix.plugin }}',
+                pull_number: pr_number,
+                state: 'closed',
+              });
+
+              // Delete its branch
+              await github.rest.git.deleteRef({
+                owner: 'johnbillion',
+                repo: '${{ matrix.plugin }}',
+                ref: `heads/${pr.data.head.ref}`,
+              });
+            } else {
+              console.log(`No PR found for ${{ matrix.plugin }}`);
+            }
+          github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}

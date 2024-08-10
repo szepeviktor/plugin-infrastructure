@@ -7,6 +7,7 @@ on:
       php:
         required: true
         type: string
+        description: PHP version to use in major.minor format (e.g. 8.0)
 
 jobs:
   test:
@@ -17,10 +18,10 @@ jobs:
     timeout-minutes: 10
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Configure environment variables
-      run: |
+      run: | #shell
         echo "PHP_FPM_UID=$(id -u)" >> $GITHUB_ENV
         echo "PHP_FPM_GID=$(id -g)" >> $GITHUB_ENV
 
@@ -40,19 +41,19 @@ jobs:
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Composer cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ inputs.php }}-composer-${{ hashFiles('composer.json') }}
 
     - name: PHPCS and PHPStan cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: tests/cache
         key: ${{ inputs.php }}-phpcs-${{ hashFiles('composer.json') }}
 
     - name: Debugging
-      run: |
+      run: | #shell
         php --version
         composer --version
 

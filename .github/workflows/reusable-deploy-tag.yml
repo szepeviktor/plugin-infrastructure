@@ -7,9 +7,19 @@ on:
       plugin:
         required: true
         type: string
+        description: The plugin slug
       readme:
         required: true
         type: string
+        description: The plugin readme file name, either readme.md or readme.txt
+      deploy:
+        required: true
+        type: boolean
+        description: Whether to deploy the release to WordPress.org
+      version:
+        required: true
+        type: string
+        description: The version number of the release
     secrets:
       WPORG_SVN_USERNAME:
         required: true
@@ -29,23 +39,62 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v3
-
-    - name: Setup node
-      uses: actions/setup-node@v3
-      with:
-        node-version-file: '.nvmrc'
-        cache: npm
-
-    - name: Install Node Dependencies
-      run: npm ci
-
-    - name: Install Composer Dependencies
-      run: composer install
+      uses: actions/checkout@v4
 
     - name: Populate Changelog
-      run: |
-        node vendor/johnbillion/plugin-infrastructure/bin/changelog.js ${{ inputs.readme }}
+      uses: actions/github-script@v7
+      env:
+        FILENAME: ${{ inputs.readme }}
+      with:
+        script: | #js
+          const fs = require('fs');
+          const { FILENAME } = process.env
+          const { data: releases } = await github.rest.repos.listReleases( context.repo );
+
+          let published = releases.filter( release =>
+            ! release.draft && ! release.prerelease
+          );
+
+          let sorted = published.sort( ( a, b ) =>
+            new Date( b.published_at ) - new Date( a.published_at )
+          );
+
+          let changelog = sorted.map( ( release ) => {
+            const date = new Date( release.published_at ).toLocaleDateString(
+              'en-gb',
+              {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }
+            );
+
+            return [
+              `### ${release.tag_name} (${date}) ###`,
+              '',
+              `${release.body}`,
+            ].join('\n');
+          } );
+
+          // Show a maximum of 10 releases
+          changelog = changelog.slice( 0, 10 );
+
+          changelog.push(
+            '### Earlier versions ###',
+            `For the changelog of earlier versions, <a href="https://github.com/${context.repo.owner}/${context.repo.repo}/releases">please refer to the releases page on GitHub</a>.`,
+          );
+          changelog.unshift('## Changelog ##');
+
+          // Append the changelog
+          try {
+            fs.appendFileSync( FILENAME, '\n' + changelog.join( '\n\n' ) );
+          } catch ( exception ) {
+            console.error( exception );
+            process.exitCode = 1;
+          }
+
+    - name: Commit Changelog
+      run: | #shell
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add ${{ inputs.readme }}
@@ -54,14 +103,25 @@ jobs:
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: WordPress Plugin Deploy
-      uses: 10up/action-wordpress-plugin-deploy@2.1.1
+      uses: 10up/action-wordpress-plugin-deploy@2.2.2
+      id: deploy
       env:
         SVN_USERNAME: ${{ secrets.WPORG_SVN_USERNAME }}
         SVN_PASSWORD: ${{ secrets.WPORG_SVN_PASSWORD }}
-        README_NAME: ${{ inputs.readme }}
+        VERSION: ${{ inputs.version }}
+      with:
+        dry-run: ${{ ! inputs.deploy }}
+        generate-zip: true
+
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: deploy
+        path: ${{ steps.deploy.outputs.zip-path }}
 
   github:
     name: GitHub Milestones
+    if: ${{ inputs.deploy }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -69,36 +129,21 @@ jobs:
     steps:
     - name: Get next versions
       id: semvers
-      uses: WyriHaximus/github-action-next-semvers@v1.0
+      uses: WyriHaximus/github-action-next-semvers@v1.2.1
       with:
-        version: ${{ github.event.release.tag_name }}
+        version: ${{ inputs.version }}
 
     - name: Create next patch milestone
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/milestones
-        repository: ${{ github.repository }}
-        title: ${{ steps.semvers.outputs.patch }}
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.patch }}" || true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      continue-on-error: true
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Create next minor milestone
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/milestones
-        repository: ${{ github.repository }}
-        title: ${{ steps.semvers.outputs.minor }}
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.minor }}" || true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      continue-on-error: true
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: Create next major milestone
-      uses: octokit/request-action@v2.x
-      with:
-        route: POST /repos/:repository/milestones
-        repository: ${{ github.repository }}
-        title: ${{ steps.semvers.outputs.major }}
+      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.major }}" || true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      continue-on-error: true
+        GITHUB_TOKEN: ${{ github.token }}

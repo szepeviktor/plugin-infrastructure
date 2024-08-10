@@ -7,13 +7,15 @@ on:
       wp:
         required: true
         type: string
+        description: WordPress version to use in major.minor format (e.g. 6.4), or "latest" or "nightly"
       php:
         required: true
         type: string
+        description: PHP version to use in major.minor format (e.g. 8.0)
       node:
-        required: false
+        required: true
         type: boolean
-        default: true
+        description: Whether to run the Node build step
 
 jobs:
   test:
@@ -27,10 +29,10 @@ jobs:
       LOCAL_WP_DEBUG: ${{ inputs.php < 8.1 && 1 || 0 }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Configure environment variables
-      run: |
+      run: | #shell
         echo "PHP_FPM_UID=$(id -u)" >> $GITHUB_ENV
         echo "PHP_FPM_GID=$(id -g)" >> $GITHUB_ENV
 
@@ -51,31 +53,33 @@ jobs:
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Composer cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ inputs.php }}-composer-${{ hashFiles('composer.json') }}
 
     - name: Debugging
-      run: |
+      run: | #shell
         php --version
         php -m
         composer --version
         docker --version
 
     - name: Install Composer dependencies
-      run: |
+      run: | #shell
         if [ "${{ inputs.wp }}" == "latest" ]; then
           composer install --dev --prefer-dist
         elif [ "${{ inputs.wp }}" == "nightly" ]; then
           composer require --dev --update-with-dependencies --prefer-dist roots/wordpress-full="dev-main"
-        else
+        elif [[ "${{ inputs.wp }}" =~ ^[0-9]\.[0-9]$ ]]; then
           composer require --dev --update-with-dependencies --prefer-dist roots/wordpress-full="~${{ inputs.wp }}.0"
+        else
+          composer require --dev --update-with-dependencies --prefer-dist roots/wordpress-full="${{ inputs.wp }}"
         fi
 
     - name: Setup node
       if: ${{ inputs.node }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
         cache: npm
