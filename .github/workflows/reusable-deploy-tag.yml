@@ -135,7 +135,7 @@ jobs:
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: "${{ github.workspace }}/${{ inputs.plugin }}.php"
-        subject-name: ${{ inputs.plugin }}
+        subject-name: "${{ inputs.plugin }}-${{ inputs.version }}"
 
   github:
     name: GitHub Milestones
