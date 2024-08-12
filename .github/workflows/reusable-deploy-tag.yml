@@ -31,7 +31,9 @@ jobs:
     name: WordPress.org
     runs-on: ubuntu-latest
     permissions:
+      attestations: write # required for build provenance attestation
       contents: read
+      id-token: write # required for build provenance attestation
     timeout-minutes: 10
     environment:
       name: WordPress.org
@@ -112,6 +114,12 @@ jobs:
       with:
         dry-run: ${{ ! inputs.deploy }}
         generate-zip: true
+
+    - name: Generate attestation for the main plugin file
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: "${{ inputs.plugin }}/${{ inputs.plugin }}.php"
+        subject-name: ${{ inputs.plugin }}
 
     - name: Upload zip
       uses: actions/upload-artifact@v4
