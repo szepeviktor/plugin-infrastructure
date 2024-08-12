@@ -134,7 +134,7 @@ jobs:
     - name: Generate attestation for the main plugin file
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: "${{ github.workspace }}/${{ inputs.plugin }}/${{ inputs.plugin }}.php"
+        subject-path: "${{ github.workspace }}/${{ inputs.plugin }}.php"
         subject-name: ${{ inputs.plugin }}
 
   github:
