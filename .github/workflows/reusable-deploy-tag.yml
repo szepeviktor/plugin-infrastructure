@@ -31,9 +31,7 @@ jobs:
     name: WordPress.org
     runs-on: ubuntu-latest
     permissions:
-      attestations: write # required for build provenance attestation
       contents: read
-      id-token: write # required for build provenance attestation
     timeout-minutes: 10
     environment:
       name: WordPress.org
@@ -115,17 +113,29 @@ jobs:
         dry-run: ${{ ! inputs.deploy }}
         generate-zip: true
 
+    - name: Upload zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.plugin }}
+        path: ${{ steps.deploy.outputs.zip-path }}
+
+  attest:
+    name: Attest Build Provenance
+    runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
+    timeout-minutes: 10
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: Generate attestation for the main plugin file
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: "${{ inputs.plugin }}/${{ inputs.plugin }}.php"
         subject-name: ${{ inputs.plugin }}
-
-    - name: Upload zip
-      uses: actions/upload-artifact@v4
-      with:
-        name: deploy
-        path: ${{ steps.deploy.outputs.zip-path }}
 
   github:
     name: GitHub Milestones
