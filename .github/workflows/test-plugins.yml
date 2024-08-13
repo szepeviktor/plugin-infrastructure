@@ -70,7 +70,11 @@ jobs:
           if [ -f .github/workflows/integration-tests.yml ]; then
             sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-integration-tests.yml@${{ env.SHA_REF }}|g' .github/workflows/integration-tests.yml
           fi
+          if [ "${{ env.HEAD_REPO }}" == "johnbillion/plugin-infrastructure" ]; then
+            sed -i 's|"johnbillion/plugin-infrastructure": "dev-trunk"|"johnbillion/plugin-infrastructure": "dev-${{ env.HEAD_BRANCH }}"|g' composer.json
+          fi
         env:
+          HEAD_BRANCH: ${{ fromJson( steps.pr-data.outputs.result ).head_branch }}
           HEAD_REPO: ${{ fromJson( steps.pr-data.outputs.result ).head_repo }}
           SHA_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_sha }}
 
