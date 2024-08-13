@@ -100,6 +100,10 @@ jobs:
           BRANCH_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_branch }}
           PR_LINK: ${{ fromJson( steps.pr-data.outputs.result ).pr_link }}
 
+      - name: Add PR link to the summary
+        run: | #shell
+          echo "[${{ matrix.plugin }}]{${{ steps.cpr.outputs.pull-request-url }}}\n\n" >> $GITHUB_STEP_SUMMARY
+
       - name: Set labels
         run: | #shell
           gh --repo johnbillion/plugin-infrastructure label create "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}" --force --color FEF2C0
