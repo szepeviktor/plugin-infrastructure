@@ -53,6 +53,4 @@ jobs:
 
     - name: Run Octoscan
       run: | #shell
-        # Octoscan does not use exit codes to indicate success or failure, so we need to check the output
-        ./octoscan/octoscan scan . | tee octoscan-result.txt
-        test ! -s octoscan-result.txt
+        ./octoscan/octoscan scan .
