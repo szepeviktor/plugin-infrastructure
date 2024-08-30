@@ -33,8 +33,8 @@ jobs:
 
     - name: Configure environment variables
       run: | #shell
-        echo "PHP_FPM_UID=$(id -u)" >> $GITHUB_ENV
-        echo "PHP_FPM_GID=$(id -g)" >> $GITHUB_ENV
+        echo "PHP_FPM_UID=$(id -u)" >> "$GITHUB_ENV"
+        echo "PHP_FPM_GID=$(id -g)" >> "$GITHUB_ENV"
 
     - name: Install PHP
       uses: shivammathur/setup-php@v2
@@ -49,7 +49,8 @@ jobs:
 
     - name: Get Composer cache directory
       id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      run: | #shell
+        echo dir="$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
     - name: Composer cache
       uses: actions/cache@v4
