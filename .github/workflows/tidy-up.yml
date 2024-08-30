@@ -11,7 +11,6 @@ permissions:
 jobs:
   find:
     name: Find PRs
-    if: github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
@@ -67,6 +66,7 @@ jobs:
           - query-monitor
           - user-switching
           - wp-crontrol
+      fail-fast: false
     steps:
       - name: Dump GitHub context
         env:
