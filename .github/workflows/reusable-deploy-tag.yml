@@ -46,6 +46,8 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.version }}
 
     - name: Populate Changelog
       uses: actions/github-script@v7
