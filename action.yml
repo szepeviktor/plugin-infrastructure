@@ -46,7 +46,7 @@ runs:
         unzip "${{ inputs.plugin }}.zip" -d zip-org
       shell: bash
 
-    - name: Unzip our generated zip
+    - name: Unzip the generated zip
       run: | #shell
         unzip "${{ inputs.zip-path }}" -d zip-generated
       shell: bash
@@ -61,7 +61,7 @@ runs:
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: "${{ github.workspace }}/${{ inputs.plugin }}.zip"
-        subject-name: "${{ inputs.plugin }}-${{ inputs.version }}-wordpress.org"
+        subject-name: "wordpress.org-${{ inputs.plugin }}-${{ inputs.version }}"
 
     - name: Check the attestation
       if: ${{ inputs.attest }}
