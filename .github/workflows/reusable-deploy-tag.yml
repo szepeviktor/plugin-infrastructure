@@ -25,6 +25,10 @@ on:
         required: true
       WPORG_SVN_PASSWORD:
         required: true
+    outputs:
+      zip-path:
+        description: The path to the generated zip file
+        value: ${{ jobs.wordpress.outputs.zip-path }}
 
 jobs:
   wordpress:
@@ -120,54 +124,6 @@ jobs:
       with:
         name: ${{ inputs.plugin }}
         path: ${{ steps.deploy.outputs.zip-path }}
-
-  attest:
-    name: Attest Build Provenance
-    runs-on: ubuntu-latest
-    needs: wordpress
-    permissions:
-      attestations: write
-      contents: read
-      id-token: write
-    timeout-minutes: 70
-    env:
-      ZIP: "${{ inputs.plugin }}.${{ inputs.version }}.zip"
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    # This fetches the zipped plugin from w.org. The zip might not exist yet if the plugin uses release confirmation
-    # and the release hasn't been confirmed. This will retry until the zip is available.
-    - name: Fetch plugin zip from WordPress.org
-      timeout-minutes: 60
-      run: | #shell
-        while true; do
-          # Perform a HEAD request to check if the zip is available
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" -I "https://downloads.wordpress.org/plugin/${{ env.ZIP }}")
-          if [ "$status_code" -eq 200 ]; then
-            curl -s -o "${{ env.ZIP }}" "https://downloads.wordpress.org/plugin/${{ env.ZIP }}"
-            break
-          else
-            echo "Plugin zip at https://downloads.wordpress.org/plugin/${{ env.ZIP }} not available yet (HTTP status $status_code), retrying in 20 seconds..."
-            sleep 20
-          fi
-        done
-
-    # We now compare the contents of the generated zip and the w.org zip to ensure they match. Only then can we attest the w.org zip.
-    - name: Unzip w.org-sourced zip
-      run: unzip "${{ env.ZIP }}" -d zip-org
-
-    - name: Unzip our generated zip
-      run: unzip "${{ needs.wordpress.outputs.zip-path }}" -d zip-generated
-
-    - name: Ensure the directories are identical
-      run: diff -r zip-generated zip-org
-
-    - name: Generate attestation for the plugin
-      uses: actions/attest-build-provenance@v1
-      with:
-        subject-path: "${{ github.workspace }}/${{ env.ZIP }}"
-        subject-name: "${{ inputs.plugin }}-${{ inputs.version }}-wordpress.org"
 
   github:
     name: GitHub Milestones
