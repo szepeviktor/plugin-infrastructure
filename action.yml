@@ -68,3 +68,5 @@ runs:
       run: | #shell
         gh attestation verify "${{ inputs.plugin }}.zip" --repo "${{ github.repository }}"
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
