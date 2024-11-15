@@ -60,5 +60,5 @@ runs:
       if: ${{ inputs.attest }}
       uses: actions/attest-build-provenance@v1
       with:
-        subject-path: "${{ github.workspace }}/${{ inputs.plugin }}.zip")
+        subject-path: "${{ github.workspace }}/${{ inputs.plugin }}.zip"
         subject-name: "${{ inputs.plugin }}-${{ inputs.version }}-wordpress.org"
