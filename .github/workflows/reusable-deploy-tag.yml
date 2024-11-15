@@ -29,6 +29,9 @@ on:
       zip-path:
         description: The path to the generated zip file
         value: ${{ jobs.wordpress.outputs.zip-path }}
+      version:
+        description: The version number of the release
+        value: ${{ inputs.version }}
 
 jobs:
   wordpress:
