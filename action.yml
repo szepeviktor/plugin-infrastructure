@@ -62,3 +62,9 @@ runs:
       with:
         subject-path: "${{ github.workspace }}/${{ inputs.plugin }}.zip"
         subject-name: "${{ inputs.plugin }}-${{ inputs.version }}-wordpress.org"
+
+    - name: Check the attestation
+      if: ${{ inputs.attest }}
+      run: | #shell
+        gh attestation verify "${{ inputs.plugin }}.zip" --repo "${{ github.repository }}"
+      shell: bash
