@@ -25,6 +25,13 @@ on:
         required: true
       WPORG_SVN_PASSWORD:
         required: true
+    outputs:
+      zip-path:
+        description: The path to the generated zip file
+        value: ${{ jobs.wordpress.outputs.zip-path }}
+      version:
+        description: The version number of the release
+        value: ${{ inputs.version }}
 
 jobs:
   wordpress:
@@ -33,6 +40,8 @@ jobs:
     permissions:
       contents: read
     timeout-minutes: 10
+    outputs:
+      zip-path: ${{ steps.deploy.outputs.zip-path }}
     environment:
       name: WordPress.org
       url: "https://wordpress.org/plugins/${{ inputs.plugin }}/"
@@ -40,6 +49,8 @@ jobs:
 
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.version }}
 
     - name: Populate Changelog
       uses: actions/github-script@v7
@@ -116,7 +127,7 @@ jobs:
     - name: Upload zip
       uses: actions/upload-artifact@v4
       with:
-        name: deploy
+        name: ${{ inputs.plugin }}
         path: ${{ steps.deploy.outputs.zip-path }}
 
   github:
