@@ -11,7 +11,7 @@ on:
 
 jobs:
   test:
-    name: PHP / PHP ${{ inputs.php }}
+    name: ${{ inputs.php }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
