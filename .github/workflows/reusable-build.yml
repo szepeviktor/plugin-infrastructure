@@ -28,6 +28,31 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup version
+      run: echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+
+    - name: Check for open issues in the milestone
+      run: | #shell
+        gh issue list --milestone "$VERSION" --state open --json number | jq -e '.[] .number' > /dev/null
+        if [ $? -eq 0 ]; then
+          echo "There are open issues remaining in the $VERSION milestone"
+          echo "https://github.com/${{ github.repository }}/milestones"
+          exit 1
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Check for open PRs in the milestone
+      run: | #shell
+        gh pr list --search "milestone:$VERSION" --state open --json number | jq -e '.[] .number' > /dev/null
+        if [ $? -eq 0 ]; then
+          echo "There are open PRs remaining in the $VERSION milestone"
+          echo "https://github.com/${{ github.repository }}/milestones"
+          exit 1
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Install PHP
       if: ${{ inputs.vendor }}
       uses: shivammathur/setup-php@v2
@@ -64,9 +89,6 @@ jobs:
       run: | #shell
         npm run build
         git add -f assets/*
-
-    - name: Setup version
-      run: echo "VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
 
     - name: Commit
       run: | #shell
