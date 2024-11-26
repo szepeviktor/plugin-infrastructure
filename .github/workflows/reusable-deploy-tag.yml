@@ -158,3 +158,10 @@ jobs:
       run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.major }}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Close completed milestone
+      run: | #shell
+        ID=$(gh api "/repos/${{ github.repository }}/milestones" | jq -r '.[] | select(.title == "${{ inputs.version }}") | .number')
+        gh api "/repos/${{ github.repository }}/milestones/$ID" --field "state=closed"
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
