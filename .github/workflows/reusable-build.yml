@@ -33,8 +33,8 @@ jobs:
 
     - name: Check for open issues in the milestone
       run: | #shell
-        gh issue list --milestone "$VERSION" --state open --json number | jq -e '.[] .number' > /dev/null
-        if [ $? -eq 0 ]; then
+        open_issues=$(gh issue list --milestone "$VERSION" --state open --json number | jq '. | length')
+        if [ "$open_issues" -gt 0 ]; then
           echo "There are open issues remaining in the $VERSION milestone"
           echo "https://github.com/${{ github.repository }}/milestones"
           exit 1
@@ -44,8 +44,8 @@ jobs:
 
     - name: Check for open PRs in the milestone
       run: | #shell
-        gh pr list --search "milestone:$VERSION" --state open --json number | jq -e '.[] .number' > /dev/null
-        if [ $? -eq 0 ]; then
+        open_prs=$(gh pr list --search "milestone:$VERSION" --state open --json number | jq '. | length')
+        if [ "$open_prs" -gt 0 ]; then
           echo "There are open PRs remaining in the $VERSION milestone"
           echo "https://github.com/${{ github.repository }}/milestones"
           exit 1
