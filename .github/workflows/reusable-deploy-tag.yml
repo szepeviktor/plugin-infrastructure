@@ -110,8 +110,6 @@ jobs:
         git config user.email github-actions@github.com
         git add ${{ inputs.readme }}
         git commit -m "Readme"
-      env:
-        TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@2.2.2
@@ -161,7 +159,7 @@ jobs:
 
     - name: Close completed milestone
       run: | #shell
-        ID=$(gh api "/repos/${{ github.repository }}/milestones" | jq -r '.[] | select(.title == "${{ inputs.version }}") | .number')
-        gh api "/repos/${{ github.repository }}/milestones/$ID" --field "state=closed"
+        ID=$(gh api "/repos/${{ github.repository }}/milestones" --jq '.[] | select(."title" == "${{ inputs.version }}") | ."number"')
+        gh api "/repos/${{ github.repository }}/milestones/${ID}" --method "PATCH" --field "state=closed"
       env:
         GITHUB_TOKEN: ${{ github.token }}
