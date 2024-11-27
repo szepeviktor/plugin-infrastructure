@@ -11,20 +11,20 @@ CODECEPT_ARGS=$1
 # Environment variables
 export COMPOSE_PROJECT_NAME=${PLUGIN}
 
-echo "Starting up..."
+echo 'ℹ️ Starting up...'
 
 # Wait for the database server:
 while ! docker compose exec -T database /bin/bash -c 'mysqladmin ping --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" --silent' | grep 'mysqld is alive' >/dev/null; do
-	echo 'Waiting for database server ping...'
+	echo 'ℹ️ Waiting for database server ping...'
 	sleep 3
 done
 while ! docker compose exec -T database /bin/bash -c 'mysql --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" --execute="SHOW DATABASES;"' | grep 'information_schema' >/dev/null; do
-	echo 'Waiting for database server query...'
+	echo 'ℹ️ Waiting for database server query...'
 	sleep 3
 done
 
 # Run the integration tests:
-echo "Running tests..."
+echo 'ℹ️ Running tests...'
 
 # Why are these sent to /dev/null? See https://github.com/docker/compose/issues/8833
 docker compose exec \
@@ -41,4 +41,4 @@ docker compose exec \
 	./vendor/bin/codecept run integration --env multisite --skip-group ms-excluded "${CODECEPT_ARGS}" \
 	< /dev/null
 
-echo "Integration tests complete."
+echo '✅ Integration tests complete.'

@@ -5,30 +5,37 @@
 set -eo pipefail
 
 # Install non-dev Composer dependencies:
+echo 'ℹ️ Updating non-dev dependencies...'
 composer remove composer/installers --update-no-dev
+echo 'ℹ️ Dumping non-dev autoloader...'
 composer dump-autoload --no-dev
 
 # Wrap the call to `setClassMapAuthoritative` in a `method_exists` check:
+echo 'ℹ️ Wrapping setClassMapAuthoritative in method_exists check...'
 sed -i.bak 's/^        \$loader->setClassMapAuthoritative(true);/        if (method_exists(\$loader,"setClassMapAuthoritative")){\n            \$loader->setClassMapAuthoritative(true);\n        }/' "${PWD}/vendor/composer/autoload_real.php"
+echo 'ℹ️ Removing backup file...'
 rm "${PWD}/vendor/composer/autoload_real.php.bak"
 
 # Confirm that the change was successful:
 if ! grep -q 'method_exists(\$loader,"setClassMapAuthoritative")' "${PWD}/vendor/composer/autoload_real.php" >/dev/null; then
-	echo 'setClassMapAuthoritative replacement failed'
+	echo 'ℹ️ setClassMapAuthoritative replacement failed!'
 	exit 1
 fi
 
 # Remove autoloading for `\Composer\InstalledVersions`:
+echo 'ℹ️ Removing autoloading for \Composer\InstalledVersions...'
 sed -i.bak '/Composer\\\\InstalledVersions/d' "${PWD}/vendor/composer/autoload_static.php"
+echo 'ℹ️ Removing backup file...'
 rm "${PWD}/vendor/composer/autoload_static.php.bak"
 
 # Confirm that the change was successful:
 if grep -q 'Composer\\\\InstalledVersions' "${PWD}/vendor/composer/autoload_static.php" >/dev/null; then
-	echo 'Composer\InstalledVersions deletion failed'
+	echo 'ℹ️ Composer\InstalledVersions deletion failed!'
 	exit 1
 fi
 
 # Remove files not needed for deployment:
+echo 'ℹ️ Removing files not needed for deployment...'
 rm -f "${PWD}/vendor/composer/autoload_classmap.php"
 rm -f "${PWD}/vendor/composer/autoload_files.php"
 rm -f "${PWD}/vendor/composer/autoload_namespaces.php"
@@ -36,3 +43,5 @@ rm -f "${PWD}/vendor/composer/autoload_psr4.php"
 rm -f "${PWD}/vendor/composer/installed.json"
 rm -f "${PWD}/vendor/composer/installed.php"
 rm -f "${PWD}/vendor/composer/InstalledVersions.php"
+
+echo '✅ Vendor build complete.'
