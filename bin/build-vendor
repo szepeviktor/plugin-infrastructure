@@ -7,6 +7,8 @@ set -eo pipefail
 # Install non-dev Composer dependencies:
 echo 'ℹ️ Removing composer/installers...'
 composer remove composer/installers
+echo 'ℹ️ Removing dev dependencies...'
+composer update --no-dev
 echo 'ℹ️ Dumping non-dev autoloader...'
 composer dump-autoload --no-dev
 
