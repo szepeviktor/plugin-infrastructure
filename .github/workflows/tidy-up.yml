@@ -12,6 +12,7 @@ jobs:
   find:
     name: Find PRs
     runs-on: ubuntu-latest
+    if: ${{ github.repository == 'johnbillion/plugin-infrastructure' }}
     timeout-minutes: 5
     outputs:
       prs: ${{ steps.find-prs.outputs.result }}
