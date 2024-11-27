@@ -58,13 +58,13 @@ jobs:
       - name: Install Node Dependencies
         run: npm ci
 
-      - name: Install Composer Dependencies
-        run: composer install
-
       - name: Generate autoload file
         if: ${{ inputs.vendor }}
         run: | #shell
-          composer run build-vendor
+          composer install
+          # We can't call `composer run build-vendor` here because the script itself messes with
+          # Composer dependencies and can result in a fatal error when dev dependencies are removed.
+          ./vendor/johnbillion/plugin-infrastructure/bin/build-vendor
           git add -f vendor/autoload.php
           git add -f vendor/composer/*
 

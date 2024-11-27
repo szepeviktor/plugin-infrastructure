@@ -80,7 +80,9 @@ jobs:
       if: ${{ inputs.vendor }}
       run: | #shell
         composer install
-        composer run build-vendor
+        # We can't call `composer run build-vendor` here because the script itself messes with
+        # Composer dependencies and can result in a fatal error when dev dependencies are removed.
+        ./vendor/johnbillion/plugin-infrastructure/bin/build-vendor
         git add -f vendor/autoload.php
         git add -f vendor/composer/*
 

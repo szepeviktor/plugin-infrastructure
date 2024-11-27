@@ -22,7 +22,6 @@
 	},
 	"bin": [
 		"bin/acceptance-tests",
-		"bin/build-vendor",
 		"bin/integration-tests",
 		"bin/tests-destroy",
 		"bin/tests-start",
