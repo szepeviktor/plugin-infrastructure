@@ -107,8 +107,6 @@ jobs:
         echo "Releasing version $VERSION ..."
         git tag "$VERSION"
         git push --tags
-      env:
-        TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create zip file
       if: always()
