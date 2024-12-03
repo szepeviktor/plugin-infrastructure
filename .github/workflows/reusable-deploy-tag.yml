@@ -125,7 +125,7 @@ jobs:
     - name: Upload zip
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.plugin }}
+        name: deployed-${{ inputs.plugin }}-${{ inputs.version }}
         path: ${{ steps.deploy.outputs.zip-path }}
 
   github:
