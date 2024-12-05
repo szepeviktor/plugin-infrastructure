@@ -123,3 +123,33 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ fromJson( steps.pr-data.outputs.result ).pr_number }}
+
+      - name: Write PR data to JSON file
+        run: | #shell
+          echo '${{ toJson( steps.pr-data.outputs.result ) }}' > pr-data.json
+
+      - name: Save PR data as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-data-${{ matrix.plugin }}
+          path: pr-data.json
+
+  wait-for-checks:
+    name: Check / ${{ matrix.plugin }}
+    needs:
+      - get-plugins
+      - open-pr
+    strategy:
+      matrix: ${{ fromJSON( needs.get-plugins.outputs.matrix ) }}
+      fail-fast: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Download PR data artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pr-data-${{ matrix.plugin }}
+
+      - name: List directory contents
+        run: ls
+
