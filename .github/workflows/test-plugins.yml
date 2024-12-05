@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.plugins.outputs.matrix }}
-      pr-data: ${{ needs.get-plugins.outputs.pr-data.result }}
+      pr-data: ${{ steps.pr-data.outputs.result }}
     steps:
       - name: Get the list of plugins to test
         id: plugins
