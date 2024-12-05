@@ -20,7 +20,7 @@ on:
 jobs:
   test:
     name: PHP ${{ inputs.php }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     timeout-minutes: 10

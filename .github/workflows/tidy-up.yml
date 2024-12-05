@@ -11,7 +11,7 @@ permissions:
 jobs:
   find:
     name: Find PRs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.repository == 'johnbillion/plugin-infrastructure' }}
     timeout-minutes: 5
     outputs:
@@ -57,7 +57,7 @@ jobs:
 
   close:
     name: Close PRs / ${{ matrix.plugin }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: find
     timeout-minutes: 5
     strategy:
