@@ -18,33 +18,12 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.plugins.outputs.matrix }}
+      pr-data: ${{ needs.get-plugins.outputs.pr-data.result }}
     steps:
       - name: Get the list of plugins to test
         id: plugins
         run: | #shell
           echo matrix='{"plugin":["extended-cpts","query-monitor","user-switching","wp-crontrol"]}' >> "$GITHUB_OUTPUT"
-
-  open-pr:
-    name: ${{ matrix.plugin }}
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure' || github.event_name == 'workflow_dispatch'
-    needs:
-      - get-plugins
-    strategy:
-      matrix: ${{ fromJSON( needs.get-plugins.outputs.matrix ) }}
-      fail-fast: false
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          repository: johnbillion/${{ matrix.plugin }}
-          token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
       - name: Fetch the PR data
         uses: actions/github-script@v7
@@ -67,6 +46,28 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.inputs.PR_NUMBER }}
 
+  open-pr:
+    name: PR / ${{ matrix.plugin }}
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure' || github.event_name == 'workflow_dispatch'
+    needs:
+      - get-plugins
+    strategy:
+      matrix: ${{ fromJSON( needs.get-plugins.outputs.matrix ) }}
+      fail-fast: false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: johnbillion/${{ matrix.plugin }}
+          token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
+
       - name: Update tests references
         run: | #shell
           if [ -f .github/workflows/acceptance-tests.yml ]; then
@@ -82,9 +83,9 @@ jobs:
             sed -i 's|"johnbillion/plugin-infrastructure": "dev-trunk"|"johnbillion/plugin-infrastructure": "dev-${{ env.HEAD_BRANCH }}"|g' composer.json
           fi
         env:
-          HEAD_BRANCH: ${{ fromJson( steps.pr-data.outputs.result ).head_branch }}
-          HEAD_REPO: ${{ fromJson( steps.pr-data.outputs.result ).head_repo }}
-          SHA_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_sha }}
+          HEAD_BRANCH: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_branch }}
+          HEAD_REPO: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_repo }}
+          SHA_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_sha }}
 
       - name: Check the changed files
         run: | #shell
@@ -107,10 +108,10 @@ jobs:
           branch: update-plugin-infrastructure/${{ env.HEAD_REPO }}/${{ env.BRANCH_REF }}
           draft: true
         env:
-          HEAD_REPO: ${{ fromJson( steps.pr-data.outputs.result ).head_repo }}
-          SHA_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_sha }}
-          BRANCH_REF: ${{ fromJson( steps.pr-data.outputs.result ).head_branch }}
-          PR_LINK: ${{ fromJson( steps.pr-data.outputs.result ).pr_link }}
+          HEAD_REPO: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_repo }}
+          SHA_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_sha }}
+          BRANCH_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_branch }}
+          PR_LINK: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).pr_link }}
 
       - name: Add PR link to the summary
         run: | #shell
@@ -122,11 +123,11 @@ jobs:
           gh --repo johnbillion/plugin-infrastructure pr edit ${{ env.PR_NUMBER }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ fromJson( steps.pr-data.outputs.result ).pr_number }}
+          PR_NUMBER: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).pr_number }}
 
       - name: Write PR data to JSON file
         run: | #shell
-          echo '${{ toJson( steps.pr-data.outputs.result ) }}' > pr-data.json
+          echo '${{ toJson( needs.get-plugins.outputs.pr-data.result ) }}' > pr-data.json
 
       - name: Save PR data as an artifact
         uses: actions/upload-artifact@v4
