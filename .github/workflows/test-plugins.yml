@@ -13,16 +13,24 @@ permissions:
   pull-requests: write
 
 jobs:
-  test:
+  get-plugins:
+    name: Get plugins
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.plugins.outputs.matrix }}
+    steps:
+      - name: Get the list of plugins to test
+        id: plugins
+        run: | #shell
+          echo matrix='{"plugin":["extended-cpts","query-monitor","user-switching","wp-crontrol"]}' >> "$GITHUB_OUTPUT"
+
+  open-pr:
     name: ${{ matrix.plugin }}
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure' || github.event_name == 'workflow_dispatch'
+    needs:
+      - get-plugins
     strategy:
-      matrix:
-        plugin:
-          - extended-cpts
-          - query-monitor
-          - user-switching
-          - wp-crontrol
+      matrix: ${{ fromJSON( needs.get-plugins.outputs.matrix ) }}
       fail-fast: false
     runs-on: ubuntu-24.04
     timeout-minutes: 5
