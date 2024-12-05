@@ -83,9 +83,9 @@ jobs:
             sed -i 's|"johnbillion/plugin-infrastructure": "dev-trunk"|"johnbillion/plugin-infrastructure": "dev-${{ env.HEAD_BRANCH }}"|g' composer.json
           fi
         env:
-          HEAD_BRANCH: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_branch }}
-          HEAD_REPO: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_repo }}
-          SHA_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_sha }}
+          HEAD_BRANCH: ${{ fromJson( needs.get-plugins.outputs.pr-data ).head_branch }}
+          HEAD_REPO: ${{ fromJson( needs.get-plugins.outputs.pr-data ).head_repo }}
+          SHA_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data ).head_sha }}
 
       - name: Check the changed files
         run: | #shell
@@ -108,10 +108,10 @@ jobs:
           branch: update-plugin-infrastructure/${{ env.HEAD_REPO }}/${{ env.BRANCH_REF }}
           draft: true
         env:
-          HEAD_REPO: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_repo }}
-          SHA_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_sha }}
-          BRANCH_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).head_branch }}
-          PR_LINK: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).pr_link }}
+          HEAD_REPO: ${{ fromJson( needs.get-plugins.outputs.pr-data ).head_repo }}
+          SHA_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data ).head_sha }}
+          BRANCH_REF: ${{ fromJson( needs.get-plugins.outputs.pr-data ).head_branch }}
+          PR_LINK: ${{ fromJson( needs.get-plugins.outputs.pr-data ).pr_link }}
 
       - name: Add PR link to the summary
         run: | #shell
@@ -123,7 +123,7 @@ jobs:
           gh --repo johnbillion/plugin-infrastructure pr edit ${{ env.PR_NUMBER }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ fromJson( needs.get-plugins.outputs.pr-data.result ).pr_number }}
+          PR_NUMBER: ${{ fromJson( needs.get-plugins.outputs.pr-data ).pr_number }}
 
       - name: Write PR data to JSON file
         run: | #shell
