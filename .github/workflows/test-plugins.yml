@@ -182,7 +182,7 @@ jobs:
               echo "ℹ️ ${in_progress}/${total} workflows are still in progress. Waiting..."
               sleep 20
             else
-              echo "✅ All workflows passed."
+              echo "✅ ${total}/${total} workflows passed."
               break
             fi
           done
