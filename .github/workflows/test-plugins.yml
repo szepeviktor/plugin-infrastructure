@@ -135,7 +135,7 @@ jobs:
           name: pr-data-${{ matrix.plugin }}
           path: pr-data.json
 
-  wait-for-checks:
+  check-status:
     name: Check / ${{ matrix.plugin }}
     needs:
       - get-plugins
@@ -151,6 +151,33 @@ jobs:
         with:
           name: pr-data-${{ matrix.plugin }}
 
-      - name: List directory contents
-        run: ls
+      - name: Read the PR data
+        id: pr-data
+        run: | #shell
+          echo "pr_data='$(cat pr-data.json)'" >> "$GITHUB_OUTPUT"
 
+      - name: Check the status of check runs
+        run: | #shell
+          echo "ℹ️ See the checks at https://github.com/johnbillion/${{ matrix.plugin }}/pull/${{ env.PR_NUMBER }}/checks"
+
+          while true; do
+            gh api repos/johnbillion/${{ matrix.plugin }}/commits/${{ env.HEAD_SHA }}/check-runs --jq '[.check_runs[]]' > check_runs.json
+
+            failed=$(jq 'map(select(.conclusion == "failure")) | length' check_runs.json)
+            in_progress=$(jq 'map(select(.status != "completed")) | length' check_runs.json)
+
+            if [ $failed -gt 0 ]; then
+              echo "⚠️ Some checks failed."
+              exit 1
+            elif [ $in_progress -gt 0 ]; then
+              echo "ℹ️ Some checks are still in progress. Waiting..."
+              sleep 20
+            else
+              echo "✅ All checks passed."
+              break
+            fi
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ fromJson( steps.pr-data.outputs.pr_data ).pr_number }}
+          HEAD_SHA: ${{ fromJson( steps.pr-data.outputs.pr_data ).head_sha }}
