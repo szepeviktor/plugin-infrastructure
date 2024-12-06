@@ -23,8 +23,7 @@ jobs:
       - name: Get the list of plugins to test
         id: plugins
         run: | #shell
-          # echo matrix='{"plugin":["extended-cpts","query-monitor","user-switching","wp-crontrol"]}' >> "$GITHUB_OUTPUT"
-          echo matrix='{"plugin":["extended-cpts"]}' >> "$GITHUB_OUTPUT"
+          echo matrix='{"plugin":["extended-cpts","query-monitor","user-switching","wp-crontrol"]}' >> "$GITHUB_OUTPUT"
 
       - name: Fetch the source PR data
         uses: actions/github-script@v7
