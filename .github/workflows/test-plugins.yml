@@ -165,12 +165,13 @@ jobs:
 
             failed=$(jq 'map(select(.conclusion == "failure")) | length' check_runs.json)
             in_progress=$(jq 'map(select(.status != "completed")) | length' check_runs.json)
+            total=$(jq 'length' check_runs.json)
 
             if [ $failed -gt 0 ]; then
               echo "⚠️ Some checks failed."
               exit 1
             elif [ $in_progress -gt 0 ]; then
-              echo "ℹ️ Some checks are still in progress. Waiting..."
+              echo "ℹ️ ${in_progress}/${total} checks are still in progress. Waiting..."
               sleep 20
             else
               echo "✅ All checks passed."
