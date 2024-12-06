@@ -156,10 +156,6 @@ jobs:
         run: | #shell
           echo "pr_data=$(jq -c . plugin-pr-data.json)" >> "$GITHUB_OUTPUT"
 
-      - name: Debugging
-        run: | #shell
-          echo '${{ steps.plugin-pr-data.outputs.pr_data }}'
-
       - name: Check the status of workflows
         run: | #shell
           echo "ℹ️ See the checks at https://github.com/johnbillion/${{ matrix.plugin }}/pull/${{ env.PLUGIN_PR_NUMBER }}/checks"
