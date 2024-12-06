@@ -75,7 +75,7 @@ jobs:
             sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-acceptance-tests.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-acceptance-tests.yml@${{ env.SHA_REF }}|g' .github/workflows/acceptance-tests.yml
           fi
           if [ -f .github/workflows/coding-standards.yml ]; then
-            sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-coding-standards.yml@doesnt-exist|g' .github/workflows/coding-standards.yml
+            sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-coding-standards.yml@${{ env.SHA_REF }}|g' .github/workflows/coding-standards.yml
           fi
           if [ -f .github/workflows/integration-tests.yml ]; then
             sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-integration-tests.yml@${{ env.SHA_REF }}|g' .github/workflows/integration-tests.yml
