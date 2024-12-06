@@ -173,10 +173,10 @@ jobs:
             total=$(jq 'length' workflow_runs.json)
 
             if [ $failed -gt 0 ]; then
-              echo "⚠️ Some workflows failed."
+              echo "❌ Some workflows failed."
               exit 1
             elif [ $cancelled -gt 0 ]; then
-              echo "⚠️ Some workflows were cancelled."
+              echo "❌ Some workflows were cancelled."
               exit 1
             elif [ $in_progress -gt 0 ]; then
               echo "ℹ️ ${in_progress}/${total} workflows are still in progress. Waiting..."
