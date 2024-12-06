@@ -171,11 +171,15 @@ jobs:
             gh api repos/johnbillion/${{ matrix.plugin }}/commits/${{ env.PLUGIN_HEAD_SHA }}/check-runs --jq '[.check_runs[]]' > check_runs.json
 
             failed=$(jq 'map(select(.conclusion == "failure")) | length' check_runs.json)
+            cancelled=$(jq 'map(select(.conclusion == "cancelled")) | length' check_runs.json)
             in_progress=$(jq 'map(select(.status != "completed")) | length' check_runs.json)
             total=$(jq 'length' check_runs.json)
 
             if [ $failed -gt 0 ]; then
               echo "⚠️ Some checks failed."
+              exit 1
+            elif [ $cancelled -gt 0 ]; then
+              echo "⚠️ Some checks were cancelled."
               exit 1
             elif [ $in_progress -gt 0 ]; then
               echo "ℹ️ ${in_progress}/${total} checks are still in progress. Waiting..."
