@@ -127,7 +127,7 @@ jobs:
 
       - name: Write PR data to JSON file
         run: | #shell
-          echo '${{ toJson( needs.get-plugins.outputs.pr-data ) }}' > pr-data.json
+          echo '${{ needs.get-plugins.outputs.pr-data }}' > pr-data.json
 
       - name: Save PR data as an artifact
         uses: actions/upload-artifact@v4
