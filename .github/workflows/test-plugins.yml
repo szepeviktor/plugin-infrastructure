@@ -165,6 +165,8 @@ jobs:
         run: | #shell
           echo "ℹ️ See the checks at https://github.com/johnbillion/${{ matrix.plugin }}/pull/${{ env.PLUGIN_PR_NUMBER }}/checks"
 
+          gh api repos/johnbillion/${{ matrix.plugin }}/commits/${{ env.PLUGIN_HEAD_SHA }}/check-suites
+
           while true; do
             gh api repos/johnbillion/${{ matrix.plugin }}/commits/${{ env.PLUGIN_HEAD_SHA }}/check-runs --jq '[.check_runs[]]' > check_runs.json
 
