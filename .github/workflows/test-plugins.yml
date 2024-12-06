@@ -127,7 +127,7 @@ jobs:
 
       - name: Write PR data to JSON file
         run: | #shell
-          echo '${{ needs.get-plugins.outputs.pr-data }}' > pr-data.json
+          echo '${{ steps.cpr.outputs }}' > pr-data.json
 
       - name: Save PR data as an artifact
         uses: actions/upload-artifact@v4
@@ -158,10 +158,10 @@ jobs:
 
       - name: Check the status of check runs
         run: | #shell
-          echo "ℹ️ See the checks at https://github.com/johnbillion/${{ matrix.plugin }}/pull/${{ env.PR_NUMBER }}/checks"
+          echo "ℹ️ See the checks at https://github.com/johnbillion/${{ matrix.plugin }}/pull/${{ env.PLUGIN_PR_NUMBER }}/checks"
 
           while true; do
-            gh api repos/johnbillion/${{ matrix.plugin }}/commits/${{ env.HEAD_SHA }}/check-runs --jq '[.check_runs[]]' > check_runs.json
+            gh api repos/johnbillion/${{ matrix.plugin }}/commits/${{ env.PLUGIN_HEAD_SHA }}/check-runs --jq '[.check_runs[]]' > check_runs.json
 
             failed=$(jq 'map(select(.conclusion == "failure")) | length' check_runs.json)
             in_progress=$(jq 'map(select(.status != "completed")) | length' check_runs.json)
@@ -179,5 +179,5 @@ jobs:
           done
         env:
           GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ fromJson( steps.pr-data.outputs.pr_data ).pr_number }}
-          HEAD_SHA: ${{ fromJson( steps.pr-data.outputs.pr_data ).head_sha }}
+          PLUGIN_PR_NUMBER: ${{ fromJson( steps.pr-data.outputs.pr_data ).pull-request-number }}
+          PLUGIN_HEAD_SHA: ${{ fromJson( steps.pr-data.outputs.pr_data ).pull-request-head-sha }}
