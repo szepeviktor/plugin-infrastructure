@@ -154,7 +154,7 @@ jobs:
       - name: Read the PR data
         id: pr-data
         run: | #shell
-          echo "pr_data='$(cat pr-data.json)'" >> "$GITHUB_OUTPUT"
+          echo "pr_data='$(jq -c . pr-data.json)'" >> "$GITHUB_OUTPUT"
 
       - name: Check the status of check runs
         run: | #shell
