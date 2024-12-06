@@ -155,7 +155,7 @@ jobs:
       - name: Read the plugin PR data
         id: plugin-pr-data
         run: | #shell
-          echo "pr_data='$(jq -c . plugin-pr-data.json)'" >> "$GITHUB_OUTPUT"
+          echo "pr_data=$(jq -c . plugin-pr-data.json)" >> "$GITHUB_OUTPUT"
 
       - name: Debugging
         run: | #shell
