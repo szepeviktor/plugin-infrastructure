@@ -2,12 +2,20 @@
 
 name: Lint
 on:
-  pull_request: null
+  pull_request:
+    paths:
+      # Only run when changes are made to workflow files.
+      - '.github/workflows/**'
   push:
     branches:
-    - trunk
+      - trunk
+    paths:
+      # Only run when changes are made to workflow files.
+      - '.github/workflows/**'
+
 permissions:
   contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
