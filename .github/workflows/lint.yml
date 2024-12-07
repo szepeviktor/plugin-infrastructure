@@ -13,8 +13,7 @@ on:
       # Only run when changes are made to workflow files.
       - '.github/workflows/**'
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,6 +23,8 @@ jobs:
   actionlint:
     name: Actionlint
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     timeout-minutes: 1
     steps:
       - name: Checkout repository
@@ -35,29 +36,22 @@ jobs:
           args: "-color -verbose -shellcheck="
 
   octoscan:
-    name: Octoscan
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    timeout-minutes: 10
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Checkout Octoscan
-      uses: actions/checkout@v4
-      with:
-        repository: synacktiv/octoscan
-        path: octoscan
+      - name: Run octoscan
+        id: octoscan
+        uses: synacktiv/action-octoscan@v1
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.21'
-
-    - name: Install and build Octoscan
-      run: | #shell
-        cd octoscan
-        go mod tidy
-        go build
-    - name: Run Octoscan
-      run: | #shell
-        ./octoscan/octoscan scan .
+      - name: Upload SARIF file to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "${{steps.octoscan.outputs.sarif_output}}"
+          category: octoscan
