@@ -108,8 +108,10 @@ jobs:
       run: | #shell
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add ${{ inputs.readme }}
+        git add "${README}"
         git commit -m "Readme"
+      env:
+        README: ${{ inputs.readme }}
 
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@2.2.2
@@ -143,23 +145,27 @@ jobs:
         version: ${{ inputs.version }}
 
     - name: Create next patch milestone
-      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.patch }}" || true
+      run: gh api "/repos/${GITHUB_REPOSITORY}/milestones" --field "title=${TITLE}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        TITLE: ${{ steps.semvers.outputs.patch }}
 
     - name: Create next minor milestone
-      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.minor }}" || true
+      run: gh api "/repos/${GITHUB_REPOSITORY}/milestones" --field "title=${TITLE}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        TITLE: ${{ steps.semvers.outputs.minor }}
 
     - name: Create next major milestone
-      run: gh api "/repos/${{ github.repository }}/milestones" --field "title=${{ steps.semvers.outputs.major }}" || true
+      run: gh api "/repos/${GITHUB_REPOSITORY}/milestones" --field "title=${TITLE}" || true
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        TITLE: ${{ steps.semvers.outputs.major }}
 
     - name: Close completed milestone
       run: | #shell
-        ID=$(gh api "/repos/${{ github.repository }}/milestones" --jq '.[] | select(."title" == "${{ inputs.version }}") | ."number"')
-        gh api "/repos/${{ github.repository }}/milestones/${ID}" --method "PATCH" --field "state=closed"
+        ID=$(gh api "/repos/${GITHUB_REPOSITORY}/milestones" --jq '.[] | select(."title" == "${WP_VERSION}") | ."number"')
+        gh api "/repos/${GITHUB_REPOSITORY}/milestones/${ID}" --method "PATCH" --field "state=closed"
       env:
         GITHUB_TOKEN: ${{ github.token }}
+        WP_VERSION: ${{ inputs.version }}

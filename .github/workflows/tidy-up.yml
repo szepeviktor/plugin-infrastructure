@@ -78,24 +78,25 @@ jobs:
         uses: actions/github-script@v7
         env:
           PRS: ${{ needs.find.outputs.prs }}
+          PLUGIN: ${{ matrix.plugin }}
         with:
           script: | #js
-            const prs = JSON.parse('${{ env.PRS }}');
+            const prs = JSON.parse( process.env.PRS);
 
-            if ( prs.hasOwnProperty('${{ matrix.plugin }}') ) {
-              const pr_number = prs['${{ matrix.plugin }}'];
+            if ( prs.hasOwnProperty( process.env.PLUGIN ) ) {
+              const pr_number = prs[process.env.PLUGIN];
 
               // Fetch the PR
               const pr = await github.rest.pulls.get({
                 owner: 'johnbillion',
-                repo: '${{ matrix.plugin }}',
+                repo: process.env.PLUGIN,
                 pull_number: pr_number,
               });
 
               // Close the PR
               await github.rest.pulls.update({
                 owner: 'johnbillion',
-                repo: '${{ matrix.plugin }}',
+                repo: process.env.PLUGIN,
                 pull_number: pr_number,
                 state: 'closed',
               });
@@ -103,10 +104,10 @@ jobs:
               // Delete its branch
               await github.rest.git.deleteRef({
                 owner: 'johnbillion',
-                repo: '${{ matrix.plugin }}',
+                repo: process.env.PLUGIN,
                 ref: `heads/${pr.data.head.ref}`,
               });
             } else {
-              console.log(`No PR found for ${{ matrix.plugin }}`);
+              console.log(`No PR found for ${process.env.PLUGIN}`);
             }
           github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}

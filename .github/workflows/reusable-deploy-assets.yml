@@ -77,10 +77,11 @@ jobs:
 
       - name: Populate Changelog
         run: | #shell
-          node vendor/johnbillion/plugin-infrastructure/bin/changelog.js ${{ inputs.readme }}
-          git add ${{ inputs.readme }}
+          node vendor/johnbillion/plugin-infrastructure/bin/changelog.js "${README}"
+          git add "${README}"
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          README: ${{ inputs.readme }}
 
       - name: Commit
         run: | #shell

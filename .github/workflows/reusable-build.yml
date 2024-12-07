@@ -33,10 +33,10 @@ jobs:
 
     - name: Check for open issues in the milestone
       run: | #shell
-        open_issues=$(gh issue list --milestone "$VERSION" --state open --json number | jq '. | length')
+        open_issues=$(gh issue list --milestone "${VERSION}" --state open --json number | jq '. | length')
         if [ "$open_issues" -gt 0 ]; then
-          echo "There are open issues remaining in the $VERSION milestone"
-          echo "https://github.com/${{ github.repository }}/milestones"
+          echo "There are open issues remaining in the ${VERSION} milestone"
+          echo "https://github.com/${GITHUB_REPOSITORY}/milestones"
           exit 1
         fi
       env:
@@ -44,10 +44,10 @@ jobs:
 
     - name: Check for open PRs in the milestone
       run: | #shell
-        open_prs=$(gh pr list --search "milestone:$VERSION" --state open --json number | jq '. | length')
+        open_prs=$(gh pr list --search "milestone:${VERSION}" --state open --json number | jq '. | length')
         if [ "$open_prs" -gt 0 ]; then
-          echo "There are open PRs remaining in the $VERSION milestone"
-          echo "https://github.com/${{ github.repository }}/milestones"
+          echo "There are open PRs remaining in the ${VERSION} milestone"
+          echo "https://github.com/${GITHUB_REPOSITORY}/milestones"
           exit 1
         fi
       env:
@@ -97,21 +97,21 @@ jobs:
         echo 'Committing ...'
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git checkout -b "release-$VERSION"
-        git commit -m "Release $VERSION"
-        git push origin -f "release-$VERSION"
+        git checkout -b "release-${VERSION}"
+        git commit -m "Release ${VERSION}"
+        git push origin -f "release-${VERSION}"
 
     - name: Tag
       if: ${{ inputs.tag }}
       run: | #shell
-        echo "Releasing version $VERSION ..."
-        git tag "$VERSION"
+        echo "Releasing version ${VERSION} ..."
+        git tag "${VERSION}"
         git push --tags
 
     - name: Create release
       if: ${{ inputs.tag }}
       run: | #shell
-        gh release create "$VERSION" --title "$VERSION" --draft
+        gh release create "${VERSION}" --title "${VERSION}" --draft
       env:
         GITHUB_TOKEN: ${{ github.token }}
 

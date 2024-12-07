@@ -33,7 +33,7 @@ jobs:
             const pr = await github.rest.pulls.get({
               owner: 'johnbillion',
               repo: 'plugin-infrastructure',
-              pull_number: ${{ env.SOURCE_PR_NUMBER }},
+              pull_number: process.env.SOURCE_PR_NUMBER,
             });
             return {
               head_repo: pr.data.head.repo.full_name,
@@ -71,16 +71,16 @@ jobs:
       - name: Update tests references
         run: | #shell
           if [ -f .github/workflows/acceptance-tests.yml ]; then
-            sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-acceptance-tests.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-acceptance-tests.yml@${{ env.SHA_REF }}|g' .github/workflows/acceptance-tests.yml
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-acceptance-tests.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-acceptance-tests.yml@${SHA_REF}|g" .github/workflows/acceptance-tests.yml
           fi
           if [ -f .github/workflows/coding-standards.yml ]; then
-            sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-coding-standards.yml@${{ env.SHA_REF }}|g' .github/workflows/coding-standards.yml
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-coding-standards.yml@${SHA_REF}|g" .github/workflows/coding-standards.yml
           fi
           if [ -f .github/workflows/integration-tests.yml ]; then
-            sed -i 's|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${{ env.HEAD_REPO }}/.github/workflows/reusable-integration-tests.yml@${{ env.SHA_REF }}|g' .github/workflows/integration-tests.yml
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-integration-tests.yml@${SHA_REF}|g" .github/workflows/integration-tests.yml
           fi
-          if [ "${{ env.HEAD_REPO }}" == "johnbillion/plugin-infrastructure" ]; then
-            sed -i 's|"johnbillion/plugin-infrastructure": "dev-trunk"|"johnbillion/plugin-infrastructure": "dev-${{ env.HEAD_BRANCH }}"|g' composer.json
+          if [ "${HEAD_REPO}" == "johnbillion/plugin-infrastructure" ]; then
+            sed -i "s|\"johnbillion/plugin-infrastructure\": \"dev-trunk\"|\"johnbillion/plugin-infrastructure\": \"dev-${HEAD_BRANCH}\"|g" composer.json
           fi
         env:
           HEAD_BRANCH: ${{ fromJson( needs.get-plugins.outputs.source-pr-data ).head_branch }}
@@ -115,19 +115,25 @@ jobs:
 
       - name: Add PR link to the summary
         run: | #shell
-          echo "${{ steps.cpr.outputs.pull-request-url }}" >> $GITHUB_STEP_SUMMARY
+          echo "${URL}" >> $GITHUB_STEP_SUMMARY
+        env:
+          URL: ${{ steps.cpr.outputs.pull-request-url }}
 
       - name: Set labels
         run: | #shell
-          gh --repo johnbillion/plugin-infrastructure label create "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}" --force --color FEF2C0
-          gh --repo johnbillion/plugin-infrastructure pr edit ${{ env.SOURCE_PR_NUMBER }} --add-label "pr:${{ matrix.plugin }}:${{ steps.cpr.outputs.pull-request-number }}"
+          gh --repo johnbillion/plugin-infrastructure label create "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}" --force --color FEF2C0
+          gh --repo johnbillion/plugin-infrastructure pr edit "${SOURCE_PR_NUMBER}" --add-label "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}"
         env:
           GH_TOKEN: ${{ github.token }}
           SOURCE_PR_NUMBER: ${{ fromJson( needs.get-plugins.outputs.source-pr-data ).pr_number }}
+          PLUGIN: ${{ matrix.plugin }}
+          PLUGIN_PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
 
       - name: Write plugin PR data to JSON file
         run: | #shell
-          echo '${{ toJson(steps.cpr.outputs) }}' > plugin-pr-data.json
+          echo "${PR_DATA}" > plugin-pr-data.json
+        env:
+          PR_DATA: ${{ toJson(steps.cpr.outputs) }}
 
       - name: Save plugin PR data as an artifact
         uses: actions/upload-artifact@v4
@@ -158,10 +164,10 @@ jobs:
 
       - name: Check the status of workflows
         run: | #shell
-          echo "ℹ️ See the checks at https://github.com/johnbillion/${{ matrix.plugin }}/pull/${{ env.PLUGIN_PR_NUMBER }}/checks"
+          echo "ℹ️ See the checks at https://github.com/johnbillion/${PLUGIN}/pull/${PLUGIN_PR_NUMBER}/checks"
 
           while true; do
-            gh api "repos/johnbillion/${{ matrix.plugin }}/actions/runs?head_sha=${{ env.PLUGIN_HEAD_SHA }}" --jq '[.workflow_runs[]]' > workflow_runs.json
+            gh api "repos/johnbillion/${PLUGIN}/actions/runs?head_sha=${PLUGIN_HEAD_SHA}" --jq '[.workflow_runs[]]' > workflow_runs.json
 
             failed=$(jq 'map(select(.conclusion == "failure")) | length' workflow_runs.json)
             cancelled=$(jq 'map(select(.conclusion == "cancelled")) | length' workflow_runs.json)
@@ -186,3 +192,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PLUGIN_PR_NUMBER: ${{ fromJson( steps.plugin-pr-data.outputs.pr_data ).pull-request-number }}
           PLUGIN_HEAD_SHA: ${{ fromJson( steps.plugin-pr-data.outputs.pr_data ).pull-request-head-sha }}
+          PLUGIN: ${{ matrix.plugin }}
