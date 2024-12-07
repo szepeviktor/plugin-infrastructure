@@ -25,3 +25,31 @@ jobs:
         uses: docker://rhysd/actionlint:latest
         with:
           args: "-color -verbose -shellcheck="
+
+  octoscan:
+    name: Octoscan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Checkout Octoscan
+      uses: actions/checkout@v4
+      with:
+        repository: synacktiv/octoscan
+        path: octoscan
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Install and build Octoscan
+      run: | #shell
+        cd octoscan
+        go mod tidy
+        go build
+    - name: Run Octoscan
+      run: | #shell
+        ./octoscan/octoscan scan .
