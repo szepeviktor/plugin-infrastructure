@@ -130,6 +130,12 @@ jobs:
         name: deployed-${{ inputs.plugin }}-${{ inputs.version }}
         path: ${{ steps.deploy.outputs.zip-path }}
 
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2.2.1
+      with:
+        show-waiting-runner: false
+
   github:
     name: GitHub Milestones
     if: ${{ inputs.deploy }}
@@ -169,3 +175,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         WP_VERSION: ${{ inputs.version }}
+
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2.2.1
+      with:
+        show-waiting-runner: false
