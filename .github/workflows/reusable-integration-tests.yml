@@ -102,3 +102,7 @@ jobs:
 
     - name: Run integration tests
       run: composer run test:integration
+
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2

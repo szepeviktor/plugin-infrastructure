@@ -126,3 +126,7 @@ jobs:
         name: build
         path: build.zip
       if: always() && steps.create-zip.outcome == 'success'
+
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2
