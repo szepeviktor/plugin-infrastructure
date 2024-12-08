@@ -49,6 +49,8 @@ jobs:
       - name: Run octoscan
         id: octoscan
         uses: synacktiv/action-octoscan@v1
+        with:
+          filter_triggers: ''
 
       - name: Upload SARIF file to GitHub
         uses: github/codeql-action/upload-sarif@v3
