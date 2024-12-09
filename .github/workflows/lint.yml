@@ -37,7 +37,7 @@ jobs:
 
   octoscan:
     name: Octoscan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       security-events: write
       actions: read
@@ -61,7 +61,7 @@ jobs:
 
   zizmor:
     name: Zizmor
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       security-events: write
       actions: read
@@ -87,7 +87,8 @@ jobs:
           category: zizmor
 
   poutine:
-    runs-on: ubuntu-latest
+    name: Poutine
+    runs-on: ubuntu-24.04
     permissions:
       security-events: write
       contents: read
@@ -102,3 +103,4 @@ jobs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: results.sarif
+        category: poutine
