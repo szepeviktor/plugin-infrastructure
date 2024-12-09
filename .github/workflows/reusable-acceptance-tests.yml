@@ -62,11 +62,11 @@ jobs:
         if [ "${WP_VERSION}" == "latest" ]; then
           composer install --dev --prefer-dist
         elif [ "${WP_VERSION}" == "nightly" ]; then
-          composer require --dev --update-with-dependencies --prefer-dist roots/wordpress-full="dev-main"
+          composer require --dev --prefer-dist --update-with-dependencies roots/wordpress-full="dev-main"
         elif [[ "${WP_VERSION}" =~ ^[0-9]\.[0-9]$ ]]; then
-          composer require --dev --update-with-dependencies --prefer-dist roots/wordpress-full="~${WP_VERSION}.0"
+          composer require --dev --prefer-dist --update-with-dependencies roots/wordpress-full="~${WP_VERSION}.0"
         else
-          composer require --dev --update-with-dependencies --prefer-dist roots/wordpress-full="${WP_VERSION}"
+          composer require --dev --prefer-dist --update-with-dependencies roots/wordpress-full="${WP_VERSION}"
         fi
       env:
         WP_VERSION: ${{ inputs.wp }}
@@ -101,3 +101,9 @@ jobs:
       with:
         name: acceptance-wp-${{ inputs.wp }}-php-${{ inputs.php }}
         path: tests/_output
+
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2.2.1
+      with:
+        show-waiting-runner: false
