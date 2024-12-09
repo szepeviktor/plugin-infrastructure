@@ -2,7 +2,7 @@
 
 name: Test Plugins
 on:
-  pull_request:
+  # pull_request:
   workflow_dispatch:
     inputs:
       PR_NUMBER:
