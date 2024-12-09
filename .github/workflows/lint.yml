@@ -25,3 +25,9 @@ jobs:
         uses: docker://rhysd/actionlint:latest
         with:
           args: "-color -verbose -shellcheck="
+
+      - name: Generate workflow timeline
+        if: always()
+        uses: Kesin11/actions-timeline@v2.2.1
+        with:
+          show-waiting-runner: false

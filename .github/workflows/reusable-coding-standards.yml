@@ -68,3 +68,9 @@ jobs:
 
     - name: Run code sniffer
       run: composer test:phpcs
+
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2.2.1
+      with:
+        show-waiting-runner: false

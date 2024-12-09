@@ -101,3 +101,9 @@ jobs:
       with:
         name: acceptance-wp-${{ inputs.wp }}-php-${{ inputs.php }}
         path: tests/_output
+
+    - name: Generate workflow timeline
+      if: always()
+      uses: Kesin11/actions-timeline@v2.2.1
+      with:
+        show-waiting-runner: false
