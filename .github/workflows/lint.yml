@@ -58,6 +58,7 @@ jobs:
         with:
           sarif_file: "${{steps.octoscan.outputs.sarif_output}}"
           category: octoscan
+
   zizmor:
     name: Zizmor
     runs-on: ubuntu-latest
