@@ -84,3 +84,20 @@ jobs:
         with:
           sarif_file: results.sarif
           category: zizmor
+
+  poutine:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Run Poutine
+      uses: boostsecurityio/poutine-action@v0.15.2
+
+    - name: Upload poutine SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: results.sarif
