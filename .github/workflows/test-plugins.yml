@@ -167,18 +167,18 @@ jobs:
           while true; do
             gh api "repos/johnbillion/${PLUGIN}/actions/runs?head_sha=${PLUGIN_HEAD_SHA}" --jq '[.workflow_runs[]]' > workflow_runs.json
 
-            failed=$(jq 'map(select(.conclusion == "failure")) | length' workflow_runs.json)
-            cancelled=$(jq 'map(select(.conclusion == "cancelled")) | length' workflow_runs.json)
-            in_progress=$(jq 'map(select(.status != "completed")) | length' workflow_runs.json)
-            total=$(jq 'length' workflow_runs.json)
+            failed="$(jq 'map(select(.conclusion == "failure")) | length' workflow_runs.json)"
+            cancelled="$(jq 'map(select(.conclusion == "cancelled")) | length' workflow_runs.json)"
+            in_progress="$(jq 'map(select(.status != "completed")) | length' workflow_runs.json)"
+            total="$(jq 'length' workflow_runs.json)"
 
-            if [ $failed -gt 0 ]; then
+            if [ "$failed" -gt 0 ]; then
               echo "❌ Some workflows failed."
               exit 1
-            elif [ $cancelled -gt 0 ]; then
+            elif [ "$cancelled" -gt 0 ]; then
               echo "❌ Some workflows were cancelled."
               exit 1
-            elif [ $in_progress -gt 0 ]; then
+            elif [ "$in_progress" -gt 0 ]; then
               echo "ℹ️ ${in_progress}/${total} workflows are still in progress. Waiting..."
               sleep 20
             else
