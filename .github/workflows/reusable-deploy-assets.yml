@@ -99,8 +99,15 @@ jobs:
           SVN_USERNAME: ${{ secrets.WPORG_SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.WPORG_SVN_PASSWORD }}
 
-      - name: Generate workflow timeline
-        if: always()
-        uses: Kesin11/actions-timeline@v2.2.1
-        with:
-          show-waiting-runner: false
+  timeline:
+    name: Generate workflow timeline
+    runs-on: ubuntu-24.04
+    permissions: {}
+    timeout-minutes: 10
+    needs:
+      - wordpress
+    steps:
+    - name: Generate workflow timeline
+      uses: Kesin11/actions-timeline@v2.2.1
+      with:
+        show-waiting-runner: false

@@ -100,8 +100,15 @@ jobs:
     - name: Run integration tests
       run: composer run test:integration
 
+  timeline:
+    name: Generate workflow timeline
+    runs-on: ubuntu-24.04
+    permissions: {}
+    timeout-minutes: 10
+    needs:
+      - test
+    steps:
     - name: Generate workflow timeline
-      if: always()
       uses: Kesin11/actions-timeline@v2.2.1
       with:
         show-waiting-runner: false
