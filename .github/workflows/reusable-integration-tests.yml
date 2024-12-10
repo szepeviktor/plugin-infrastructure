@@ -62,13 +62,6 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: ${{ inputs.php }}-composer-${{ hashFiles('composer.json') }}
 
-    - name: Debugging
-      run: | #shell
-        php --version
-        php -m
-        composer --version
-        docker --version
-
     - name: Install Composer dependencies
       run: | #shell
         if [ "${WP_VERSION}" == "latest" ]; then
