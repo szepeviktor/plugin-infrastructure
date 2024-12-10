@@ -53,7 +53,7 @@ jobs:
     - name: PHPCS cache
       uses: actions/cache@v4
       with:
-        path: tests/cache
+        path: tests/cache/phpcs.json
         key: phpcs-${{ inputs.php }}-${{ hashFiles('composer.json') }}-${{ hashFiles('phpcs.xml.dist') }}
 
     - name: Debugging
