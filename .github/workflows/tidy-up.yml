@@ -5,12 +5,13 @@ on:
   pull_request:
     types: [closed]
 
-permissions:
-  pull-requests: write
+permissions: {}
 
 jobs:
   find:
     name: Find PRs
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-24.04
     if: ${{ github.repository == 'johnbillion/plugin-infrastructure' }}
     timeout-minutes: 5
@@ -53,10 +54,10 @@ jobs:
             }
 
             return prs;
-          github-token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
 
   close:
     name: Close PRs / ${{ matrix.plugin }}
+    permissions: {}
     runs-on: ubuntu-24.04
     needs: find
     timeout-minutes: 5

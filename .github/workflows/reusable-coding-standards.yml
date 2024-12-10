@@ -9,6 +9,8 @@ on:
         type: string
         description: PHP version to use in major.minor format (e.g. 8.0)
 
+permissions: {}
+
 jobs:
   test:
     name: ${{ inputs.php }}

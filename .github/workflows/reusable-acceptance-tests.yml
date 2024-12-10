@@ -17,6 +17,8 @@ on:
         type: boolean
         description: Whether to run the Node build step
 
+permissions: {}
+
 jobs:
   test:
     name: PHP ${{ inputs.php }}

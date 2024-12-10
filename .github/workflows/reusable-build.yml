@@ -17,6 +17,8 @@ on:
         type: boolean
         description: Whether to tag the release
 
+permissions: {}
+
 jobs:
   build:
     name: Release
