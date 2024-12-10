@@ -26,6 +26,8 @@ on:
       WPORG_SVN_PASSWORD:
         required: true
 
+permissions: {}
+
 jobs:
   wordpress:
     name: WordPress.org

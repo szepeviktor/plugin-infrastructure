@@ -33,6 +33,8 @@ on:
         description: The version number of the release
         value: ${{ inputs.version }}
 
+permissions: {}
+
 jobs:
   wordpress:
     name: WordPress.org
