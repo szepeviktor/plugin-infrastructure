@@ -112,7 +112,7 @@ jobs:
 
       - name: Add PR link to the summary
         run: | #shell
-          echo "${URL}" >> $GITHUB_STEP_SUMMARY
+          echo "${URL}" >> "$GITHUB_STEP_SUMMARY"
         env:
           URL: ${{ steps.cpr.outputs.pull-request-url }}
 
