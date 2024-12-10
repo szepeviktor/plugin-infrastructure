@@ -64,6 +64,7 @@ jobs:
         with:
           repository: johnbillion/${{ matrix.plugin }}
           token: ${{ secrets.PLUGINS_PUSH_TOKEN }}
+          persist-credentials: false
 
       - name: Update tests references
         run: | #shell
