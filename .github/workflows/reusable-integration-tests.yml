@@ -60,7 +60,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ inputs.php }}-composer-${{ hashFiles('composer.json') }}
+        key: composer-${{ inputs.php }}-${{ hashFiles('composer.json') }}
 
     - name: Install Composer dependencies
       run: | #shell
