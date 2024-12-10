@@ -59,7 +59,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: 8.0-composer-${{ hashFiles('composer.json') }}
+        key: composer-8.0-${{ hashFiles('composer.json') }}
 
     - name: Install Composer dependencies
       run: | #shell

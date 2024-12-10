@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow
 
-name: Coding Standards
+name: Static Analysis
 on:
   workflow_call:
     inputs:
@@ -24,16 +24,11 @@ jobs:
       with:
         persist-credentials: false
 
-    - name: Configure environment variables
-      run: | #shell
-        echo PHP_FPM_UID="$(id -u)" >> "$GITHUB_ENV"
-        echo PHP_FPM_GID="$(id -g)" >> "$GITHUB_ENV"
-
     - name: Install PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ inputs.php }}
-        tools: composer:v2, cs2pr
+        tools: composer:v2
         coverage: none
         ini-file: development
       env:
@@ -50,30 +45,17 @@ jobs:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: composer-${{ inputs.php }}-${{ hashFiles('composer.json') }}
 
-    - name: PHPCS cache
+    - name: PHPStan cache
       uses: actions/cache@v4
       with:
-        path: tests/cache
-        key: phpcs-${{ inputs.php }}-${{ hashFiles('composer.json') }}-${{ hashFiles('phpcs.xml.dist') }}
-
-    - name: Debugging
-      run: | #shell
-        php --version
-        composer --version
-
-    - name: Composer validate
-      run: composer validate --strict --no-check-lock
+        path: tests/cache/phpstan
+        key: phpstan-${{ inputs.php }}-${{ hashFiles('composer.json') }}-${{ hashFiles('phpstan.neon.dist') }}
 
     - name: Install dependencies
       run: composer install --prefer-dist
 
-    - name: Run code sniffer
-      run: composer test:phpcs -- --report-checkstyle=./tests/cache/phpcs-report.xml
-      id: phpcs
-
-    - name: Show PHPCS results in PR
-      if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-      run: cs2pr ./tests/cache/phpcs-report.xml || true
+    - name: Run static analysis
+      run: composer test:phpstan
 
     - name: Generate workflow timeline
       if: always()
