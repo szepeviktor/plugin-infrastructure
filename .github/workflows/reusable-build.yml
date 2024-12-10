@@ -29,6 +29,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        persist-credentials: true
 
     - name: Setup version
       run: echo VERSION="$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
