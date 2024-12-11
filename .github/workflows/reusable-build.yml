@@ -131,15 +131,8 @@ jobs:
         path: build.zip
       if: always() && steps.create-zip.outcome == 'success'
 
-  timeline:
-    name: Generate workflow timeline
-    runs-on: ubuntu-24.04
-    permissions: {}
-    timeout-minutes: 10
-    needs:
-      - build
-    steps:
     - name: Generate workflow timeline
+      if: ${{ always() }}
       uses: Kesin11/actions-timeline@v2.2.1
       with:
         show-waiting-runner: false
