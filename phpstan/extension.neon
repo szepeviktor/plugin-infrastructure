@@ -4,4 +4,4 @@ parameters:
 	dynamicConstantNames:
 		- COOKIE_DOMAIN
 		- SAVEQUERIES
-	tmpDir: ../../../../tests/cache
+	tmpDir: ../../../../tests/cache/phpstan

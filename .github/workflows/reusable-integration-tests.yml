@@ -60,14 +60,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ inputs.php }}-composer-${{ hashFiles('composer.json') }}
-
-    - name: Debugging
-      run: | #shell
-        php --version
-        php -m
-        composer --version
-        docker --version
+        key: composer-${{ inputs.php }}-${{ hashFiles('composer.json') }}
 
     - name: Install Composer dependencies
       run: | #shell
@@ -106,9 +99,3 @@ jobs:
 
     - name: Run integration tests
       run: composer run test:integration
-
-    - name: Generate workflow timeline
-      if: always()
-      uses: Kesin11/actions-timeline@v2.2.1
-      with:
-        show-waiting-runner: false
