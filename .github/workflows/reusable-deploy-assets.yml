@@ -93,6 +93,12 @@ jobs:
           git config user.email github-actions@github.com
           git commit -m "Assets"
 
+      - name: Install SVN
+        run: | #shell
+          sudo apt-get update
+          sudo apt-get install -y subversion
+          svn --version
+
       - name: WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-asset-update@2.1.2
         env:
