@@ -74,7 +74,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version-file: '.nvmrc'
-        cache: npm
 
     - name: Install Dependencies
       if: ${{ inputs.node }}
