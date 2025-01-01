@@ -175,11 +175,9 @@ jobs:
       run: | #shell
         JQ_FILTER='.[] | select(.title == "'"${WP_VERSION}"'") | .number'
         ID="$(gh api "/repos/${GITHUB_REPOSITORY}/milestones" --jq "$JQ_FILTER")"
-        if [ -z "$ID" ]; then
-            echo "Milestone not found for version ${WP_VERSION}"
-            exit 1
+        if [ -n "$ID" ]; then
+          gh api "/repos/${GITHUB_REPOSITORY}/milestones/${ID}" --method "PATCH" --field "state=closed"
         fi
-        gh api "/repos/${GITHUB_REPOSITORY}/milestones/${ID}" --method "PATCH" --field "state=closed"
       env:
         GITHUB_TOKEN: ${{ github.token }}
         WP_VERSION: ${{ inputs.version }}
