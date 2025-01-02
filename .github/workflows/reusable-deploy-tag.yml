@@ -50,13 +50,13 @@ jobs:
     steps:
 
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         ref: ${{ inputs.version }}
         persist-credentials: false
 
     - name: Populate Changelog
-      uses: actions/github-script@v7
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
       env:
         FILENAME: ${{ inputs.readme }}
       with:
@@ -123,7 +123,7 @@ jobs:
         svn --version
 
     - name: WordPress Plugin Deploy
-      uses: 10up/action-wordpress-plugin-deploy@2.2.2
+      uses: 10up/action-wordpress-plugin-deploy@abb939a0d0bfd01063e8d1933833209201557381 # 2.2.2
       id: deploy
       env:
         SVN_USERNAME: ${{ secrets.WPORG_SVN_USERNAME }}
@@ -134,7 +134,7 @@ jobs:
         generate-zip: true
 
     - name: Upload zip
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4
       with:
         name: deployed-${{ inputs.plugin }}-${{ inputs.version }}
         path: ${{ steps.deploy.outputs.zip-path }}
@@ -149,7 +149,7 @@ jobs:
     steps:
     - name: Get next versions
       id: semvers
-      uses: WyriHaximus/github-action-next-semvers@v1.2.1
+      uses: WyriHaximus/github-action-next-semvers@18aa9ed4152808ab99b88d71f5481e41f8d89930 # v1.2.1
       with:
         version: ${{ inputs.version }}
 

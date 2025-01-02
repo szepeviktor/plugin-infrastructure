@@ -31,7 +31,7 @@ jobs:
       LOCAL_WP_DEBUG: ${{ inputs.php < 8.1 && 1 || 0 }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       with:
         persist-credentials: false
 
@@ -41,7 +41,7 @@ jobs:
         echo PHP_FPM_GID="$(id -g)" >> "$GITHUB_ENV"
 
     - name: Install PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@9e72090525849c5e82e596468b86eb55e9cc5401 # v2
       with:
         php-version: ${{ inputs.php }}
         tools: composer:v2
@@ -57,7 +57,7 @@ jobs:
       run: echo dir="$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
 
     - name: Composer cache
-      uses: actions/cache@v4
+      uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
       with:
         path: ${{ steps.composer-cache.outputs.dir }}
         key: composer-${{ inputs.php }}-${{ hashFiles('composer.json') }}
@@ -78,7 +78,7 @@ jobs:
 
     - name: Setup node
       if: ${{ inputs.node }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
       with:
         node-version-file: '.nvmrc'
         cache: npm
