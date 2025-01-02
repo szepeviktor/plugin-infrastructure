@@ -12,6 +12,7 @@ on:
     paths:
       # Only run when changes are made to workflow files.
       - '.github/workflows/**'
+  workflow_dispatch:
 
 permissions: {}
 
