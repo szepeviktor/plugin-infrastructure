@@ -72,14 +72,23 @@ jobs:
           if [ -f .github/workflows/acceptance-tests.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-acceptance-tests.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-acceptance-tests.yml@${SHA_REF}|g" .github/workflows/acceptance-tests.yml
           fi
+          if [ -f .github/workflows/build.yml ]; then
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-build.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-build.yml@${SHA_REF}|g" .github/workflows/build.yml
+          fi
           if [ -f .github/workflows/coding-standards.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-coding-standards.yml@${SHA_REF}|g" .github/workflows/coding-standards.yml
           fi
-          if [ -f .github/workflows/static-analysis.yml ]; then
-            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-static-analysis.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-static-analysis.yml@${SHA_REF}|g" .github/workflows/static-analysis.yml
+          if [ -f .github/workflows/deploy-assets.yml ]; then
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-deploy-assets.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-deploy-assets.yml@${SHA_REF}|g" .github/workflows/deploy-assets.yml
+          fi
+          if [ -f .github/workflows/deploy-tag.yml ]; then
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-deploy-tag.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-deploy-tag.yml@${SHA_REF}|g" .github/workflows/deploy-tag.yml
           fi
           if [ -f .github/workflows/integration-tests.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-integration-tests.yml@${SHA_REF}|g" .github/workflows/integration-tests.yml
+          fi
+          if [ -f .github/workflows/static-analysis.yml ]; then
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-static-analysis.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-static-analysis.yml@${SHA_REF}|g" .github/workflows/static-analysis.yml
           fi
           if [ -f .github/workflows/lint-workflows.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-workflow-lint.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-workflow-lint.yml@${SHA_REF}|g" .github/workflows/lint-workflows.yml
