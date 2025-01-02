@@ -158,7 +158,7 @@ jobs:
 
       - name: Set labels
         run: | #shell
-          gh --repo johnbillion/plugin-infrastructure label create "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}" --force --color FEF2C0
+          gh --repo johnbillion/plugin-infrastructure label create "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}" --force --color F4F4F4
           gh --repo johnbillion/plugin-infrastructure pr edit "${SOURCE_PR_NUMBER}" --add-label "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}"
         env:
           GH_TOKEN: ${{ github.token }}
