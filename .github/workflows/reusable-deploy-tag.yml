@@ -149,9 +149,13 @@ jobs:
     steps:
     - name: Get next versions
       id: semvers
-      uses: WyriHaximus/github-action-next-semvers@18aa9ed4152808ab99b88d71f5481e41f8d89930 # v1.2.1
-      with:
-        version: ${{ inputs.version }}
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        IFS='.' read -a parts <<< "$VERSION"
+        echo major="$((parts[0] + 1)).0.0" >> "$GITHUB_OUTPUT"
+        echo minor="${parts[0]}.$(({parts[1]} + 1)).0" >> "$GITHUB_OUTPUT"
+        echo patch="${parts[0]}.${parts[1]}.$(({parts[2]} + 1))" >> "$GITHUB_OUTPUT"
 
     - name: Create next patch milestone
       run: gh api "/repos/${GITHUB_REPOSITORY}/milestones" --field "title=${TITLE}" || true
