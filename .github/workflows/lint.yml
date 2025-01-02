@@ -3,15 +3,11 @@
 name: Lint workflow files
 on:
   pull_request:
-    paths:
-      # Only run when changes are made to workflow files.
-      - '.github/workflows/**'
+    branches:
+      - '**'
   push:
     branches:
       - trunk
-    paths:
-      # Only run when changes are made to workflow files.
-      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions: {}
