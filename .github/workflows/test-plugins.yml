@@ -74,6 +74,9 @@ jobs:
           if [ -f .github/workflows/coding-standards.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-coding-standards.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-coding-standards.yml@${SHA_REF}|g" .github/workflows/coding-standards.yml
           fi
+          if [ -f .github/workflows/static-analysis.yml ]; then
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-static-analysis.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-static-analysis.yml@${SHA_REF}|g" .github/workflows/static-analysis.yml
+          fi
           if [ -f .github/workflows/integration-tests.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-integration-tests.yml@${SHA_REF}|g" .github/workflows/integration-tests.yml
           fi
