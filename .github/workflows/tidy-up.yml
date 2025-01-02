@@ -34,19 +34,19 @@ jobs:
                 continue;
               }
 
-              // Delete the label
-              await github.rest.issues.deleteLabel({
-                owner: 'johnbillion',
-                repo: 'plugin-infrastructure',
-                name: label,
-              });
-
               // Close the plugin PR
               const pr = await github.rest.pulls.update({
                 owner: 'johnbillion',
                 repo: repo,
                 pull_number: pr_number,
                 state: 'closed',
+              });
+
+              // Delete the label
+              await github.rest.issues.deleteLabel({
+                owner: 'johnbillion',
+                repo: 'plugin-infrastructure',
+                name: label,
               });
 
               // Delete the branch for the plugin PR
