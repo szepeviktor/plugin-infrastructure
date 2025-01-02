@@ -115,8 +115,8 @@ jobs:
       run: |
         IFS='.' read -a parts <<< "$VERSION"
         echo major="$((parts[0] + 1)).0.0" >> "$GITHUB_OUTPUT"
-        echo minor="${parts[0]}.$(({parts[1]} + 1)).0" >> "$GITHUB_OUTPUT"
-        echo patch="${parts[0]}.${parts[1]}.$(({parts[2]} + 1))" >> "$GITHUB_OUTPUT"
+        echo minor="${parts[0]}.$((parts[1] + 1)).0" >> "$GITHUB_OUTPUT"
+        echo patch="${parts[0]}.${parts[1]}.$((parts[2] + 1))" >> "$GITHUB_OUTPUT"
 
     - name: Create next patch milestone
       run: gh api "/repos/${GITHUB_REPOSITORY}/milestones" --field "title=${TITLE}" || true
