@@ -52,7 +52,7 @@ Plugins that use this library all use a similar setup in their workflows:
 
 ### Workflow file linting
 
-* Push to a pull request, `lint-workflows.yml` fires
+* Push to a main branch or pull request, `lint-workflows.yml` fires
 	* Uses `reusable-workflow-lint.yml`
 		* Lints all GitHub Actions workflow files for correctness and security using:
 			* ActionLint
