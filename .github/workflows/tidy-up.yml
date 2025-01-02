@@ -22,6 +22,7 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
         id: find-prs
         with:
+          retries: 2
           script: | #js
             const pr = await github.rest.pulls.get({
               owner: 'johnbillion',
@@ -71,6 +72,7 @@ jobs:
           PRS: ${{ needs.find.outputs.prs }}
           PLUGIN: ${{ matrix.plugin }}
         with:
+          retries: 2
           script: | #js
             const prs = JSON.parse( process.env.PRS);
 
