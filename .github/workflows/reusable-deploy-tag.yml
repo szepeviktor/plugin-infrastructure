@@ -40,8 +40,10 @@ jobs:
     name: WordPress.org
     runs-on: ubuntu-24.04
     permissions:
+      attestations: write
       contents: read
-    timeout-minutes: 10
+      id-token: write
+    timeout-minutes: 70
     outputs:
       zip-path: ${{ steps.deploy.outputs.zip-path }}
     environment:
@@ -99,6 +101,14 @@ jobs:
       with:
         name: deployed-${{ inputs.plugin }}-${{ inputs.version }}
         path: ${{ steps.deploy.outputs.zip-path }}
+
+    - name: Generate build provenance attestation
+      if: ${{ inputs.deploy }}
+      uses: johnbillion/action-wordpress-plugin-attestation@ccbb8653d9d29a5c2e1d6a21a2fcc5dfe695c5b2 # 0.6.0
+      with:
+        plugin: ${{ inputs.plugin }}
+        version: ${{ inputs.version }}
+        zip-path: ${{ steps.deploy.outputs.zip-path }}
 
   github:
     name: GitHub Milestones

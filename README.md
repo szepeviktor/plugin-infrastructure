@@ -56,9 +56,9 @@ Plugins that use this library all use a similar setup in their workflows:
 		* Uses `10up/action-wordpress-plugin-deploy`
 			* Deploys the new version to WordPress.org
 			* Generates a zip file
-	* Uses `johnbillion/action-wordpress-plugin-attestation`
-		* Fetches the zip from WordPress.org
-		* Generates an attestation if the zip contents match the build
+		* Uses `johnbillion/action-wordpress-plugin-attestation`
+			* Fetches the zip from WordPress.org
+			* Generates a build provenance attestation if the zip contents matches the build
 
 ## Licence
 
