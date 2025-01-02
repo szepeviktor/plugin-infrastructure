@@ -31,15 +31,35 @@ Plugins that use this library all use a similar setup in their workflows:
 	* Uses `reusable-integration-tests.yml`
 		* Installs PHP and WordPress
 		* Runs the build
-		* Runs integration testing with wp-browser
+		* Runs integration testing with wp-browser, once for:
+			* Single site
+			* Multisite
 
 ### Coding standards testing
 
 * Push to a main branch or pull request, `coding-standards.yml` fires
-	* Constructs a matrix of supported PHP versions
 	* Uses `reusable-coding-standards.yml`
 		* Installs PHP
-		* Checks coding standards with PHPStan and PHPCS
+		* Checks coding standards with PHPCS
+
+### Static analysis
+
+* Push to a main branch or pull request, `static-analysis.yml` fires
+	* Constructs a matrix of supported PHP versions
+	* Uses `reusable-static-analysis.yml`
+		* Installs PHP
+		* Runs static analysis with PHPStan
+
+### Workflow file linting
+
+* Push to a pull request, `lint-workflows.yml` fires
+	* Uses `reusable-workflow-lint.yml`
+		* Lints all GitHub Actions workflow files for correctness and security using:
+			* ActionLint
+			* Octoscan
+			* Zizmor
+			* Poutine
+		* Uploads results to GitHub Code Scanning
 
 ### Deployment to WordPress.org
 
@@ -50,7 +70,8 @@ Plugins that use this library all use a similar setup in their workflows:
 		* Commits built files
 		* Pushes to `release-$VERSION`
 		* Tags the new version and pushes
-* Publish a release, `deploy-tag.yml` fires
+		* Creates a draft release
+* Publish the release, `deploy-tag.yml` fires
 	* Uses `reusable-deploy-tag.yml`
 		* Creates a changelog entry from the release notes
 		* Uses `10up/action-wordpress-plugin-deploy`
@@ -59,6 +80,8 @@ Plugins that use this library all use a similar setup in their workflows:
 		* Uses `johnbillion/action-wordpress-plugin-attestation`
 			* Fetches the zip from WordPress.org
 			* Generates a build provenance attestation if the zip contents matches the build
+		* Closes the completed milestone for the release
+		* Creates the next major, minor, and patch release milestones
 
 ## Licence
 
