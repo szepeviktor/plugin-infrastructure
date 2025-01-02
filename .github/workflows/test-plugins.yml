@@ -81,6 +81,9 @@ jobs:
           if [ -f .github/workflows/integration-tests.yml ]; then
             sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-integration-tests.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-integration-tests.yml@${SHA_REF}|g" .github/workflows/integration-tests.yml
           fi
+          if [ -f .github/workflows/workflow-lint.yml ]; then
+            sed -i "s|johnbillion/plugin-infrastructure/.github/workflows/reusable-workflow-lint.yml@trunk|${HEAD_REPO}/.github/workflows/reusable-workflow-lint.yml@${SHA_REF}|g" .github/workflows/workflow-lint.yml
+          fi
           if [ "${HEAD_REPO}" == "johnbillion/plugin-infrastructure" ]; then
             sed -i "s|\"johnbillion/plugin-infrastructure\": \"dev-trunk\"|\"johnbillion/plugin-infrastructure\": \"dev-${HEAD_BRANCH}\"|g" composer.json
           fi
