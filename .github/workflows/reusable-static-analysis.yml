@@ -52,7 +52,7 @@ jobs:
         key: phpstan-${{ inputs.php }}-${{ hashFiles('composer.json') }}-${{ hashFiles('phpstan.neon.dist') }}
 
     - name: Install dependencies
-      run: composer install --prefer-dist
+      run: composer install
 
     - name: Run static analysis
       run: composer test:phpstan
