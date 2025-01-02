@@ -48,7 +48,7 @@ jobs:
           SOURCE_PR_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.inputs.PR_NUMBER }}
 
   open-pr:
-    name: PR / ${{ matrix.plugin }}
+    name: Open PR / ${{ matrix.plugin }}
     permissions:
       pull-requests: write
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'johnbillion/plugin-infrastructure' || github.event_name == 'workflow_dispatch'
@@ -121,16 +121,6 @@ jobs:
         env:
           URL: ${{ steps.cpr.outputs.pull-request-url }}
 
-      - name: Set labels
-        run: | #shell
-          gh --repo johnbillion/plugin-infrastructure label create "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}" --force --color FEF2C0
-          gh --repo johnbillion/plugin-infrastructure pr edit "${SOURCE_PR_NUMBER}" --add-label "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}"
-        env:
-          GH_TOKEN: ${{ github.token }}
-          SOURCE_PR_NUMBER: ${{ fromJson( needs.get-plugins.outputs.source-pr-data ).pr_number }}
-          PLUGIN: ${{ matrix.plugin }}
-          PLUGIN_PR_NUMBER: ${{ steps.cpr.outputs.pull-request-number }}
-
       - name: Write plugin PR data to JSON file
         run: | #shell
           echo "${PR_DATA}" > plugin-pr-data.json
@@ -143,8 +133,41 @@ jobs:
           name: plugin-pr-data-${{ matrix.plugin }}
           path: plugin-pr-data.json
 
+  label:
+    name: Label PR / ${{ matrix.plugin }}
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-24.04
+    needs:
+      - get-plugins
+      - open-pr
+    timeout-minutes: 5
+    strategy:
+      matrix: ${{ fromJSON( needs.get-plugins.outputs.matrix ) }}
+      fail-fast: false
+    steps:
+      - name: Download plugin PR data artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4
+        with:
+          name: plugin-pr-data-${{ matrix.plugin }}
+
+      - name: Read the plugin PR data
+        id: plugin-pr-data
+        run: | #shell
+          echo pr_data="$(jq -c . plugin-pr-data.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Set labels
+        run: | #shell
+          gh --repo johnbillion/plugin-infrastructure label create "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}" --force --color FEF2C0
+          gh --repo johnbillion/plugin-infrastructure pr edit "${SOURCE_PR_NUMBER}" --add-label "pr:${PLUGIN}:${PLUGIN_PR_NUMBER}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_PR_NUMBER: ${{ fromJson( needs.get-plugins.outputs.source-pr-data ).pr_number }}
+          PLUGIN: ${{ matrix.plugin }}
+          PLUGIN_PR_NUMBER: ${{ fromJson( steps.plugin-pr-data.outputs.pr_data ).pull-request-number }}
+
   check-status:
-    name: Check / ${{ matrix.plugin }}
+    name: Check PR / ${{ matrix.plugin }}
     permissions: {}
     needs:
       - get-plugins
