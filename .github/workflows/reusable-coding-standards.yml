@@ -63,7 +63,7 @@ jobs:
       run: composer install
 
     - name: Run code sniffer
-      run: composer test:phpcs -- --report-checkstyle=./tests/cache/phpcs-report.xml
+      run: composer run test:phpcs -- --report-checkstyle=./tests/cache/phpcs-report.xml
       id: phpcs
 
     - name: Show PHPCS results in PR

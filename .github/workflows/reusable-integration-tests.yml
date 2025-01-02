@@ -92,7 +92,7 @@ jobs:
       run: npm run build
 
     - name: Start Docker environment
-      run: composer run test:start -- --quiet-pull
+      run: composer exec tests-start -- --quiet-pull
 
     - name: Log running Docker containers
       run: docker ps -a

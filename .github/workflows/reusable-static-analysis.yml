@@ -55,4 +55,4 @@ jobs:
       run: composer install
 
     - name: Run static analysis
-      run: composer test:phpstan
+      run: composer run test:phpstan
