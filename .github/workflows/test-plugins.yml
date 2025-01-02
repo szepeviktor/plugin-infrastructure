@@ -172,6 +172,7 @@ jobs:
     needs:
       - get-plugins
       - open-pr
+      - label
     strategy:
       matrix: ${{ fromJSON( needs.get-plugins.outputs.matrix ) }}
       fail-fast: false
