@@ -79,7 +79,7 @@ echo 'ℹ️ Running tests...'
 TEST_SITE_WEBDRIVER_PORT=$CHROME_PORT \
 	TEST_SITE_DATABASE_PORT=$DATABASE_PORT \
 	TEST_SITE_WP_URL=$WP_URL \
-	./vendor/bin/codecept run acceptance --steps "${CODECEPT_ARGS}"
+	./vendor/bin/codecept run acceptance "${CODECEPT_ARGS}"
 
 # Ciao:
 docker compose stop chrome
